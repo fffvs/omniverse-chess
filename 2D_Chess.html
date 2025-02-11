@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>2D Chess</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,500;0,700;1,400&display=swap');
+ 
+        /* Reset and General Styles */
+        * {
+            padding: 0;
+            margin: 0;
+            outline: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font: 400 14px Roboto, sans-serif;
+            background-image: linear-gradient(to bottom, #03055B, #050A1F); /* Smooth Galactic background */
+            background-size: cover; /* Ensures gradient covers the whole area */
+            background-attachment: fixed; /* Keeps gradient fixed during scrolling */
+            color: #66CCCC;
+            -webkit-font-smoothing: antialiased;
+            overflow: hidden; /* Hide scrollbars */
+        }
+
+        input, button, textarea {
+            font: 400 18px Roboto, sans-serif;
+            color: #66CCCC;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #66CCCC;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 5px 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        /* Board Styles */
+        .board {
+            width: min-content;
+            margin: 32px auto 0;
+            border: 5px solid #66CCCC;  /* Galactic themed border */
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Shadow for depth */
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .row {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .square {
+            width: 50px;
+            height: 50px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            color: #66CCCC;
+            border: 1px solid #333;  /* Subtle border */
+        }
+
+        /* Square Colors */
+        .black {
+            background: #333;  /* Darker space color */
+        }
+
+        .white {
+            background: #444;  /* Lighter nebula color */
+        }
+
+        /* Piece Styles */
+        .piece {
+            width: 40px;
+            height: 40px;
+            cursor: grab; /* Indicate draggable */
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: #FFF;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.5;
+            }
+        }
+
+        .star1 {
+            top: 10%;
+            left: 20%;
+            animation-delay: 0.5s;
+        }
+
+        .star2 {
+            top: 30%;
+            left: 50%;
+            animation-delay: 1s;
+        }
+
+        .star3 {
+            top: 50%;
+            left: 80%;
+            animation-delay: 1.5s;
+        }
+
+        .star4 {
+            top: 70%;
+            left: 10%;
+            animation-delay: 2s;
+        }
+
+        .star5 {
+            top: 90%;
+            left: 60%;
+            animation-delay: 2.5s;
+        }
+
+        /* Title Style */
+        .title {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #66CCCC;
+        }
+    </style>
+</head>
+<body>
+    <div class="star star1"></div>
+    <div class="star star2"></div>
+    <div class="star star3"></div>
+    <div class="star star4"></div>
+    <div class="star star5"></div>
+    <h1 class="title">2D Chess - Galactic Edition</h1>
+    <div id="main">
+        <div class="board">
+            <div class="row">
+                <div id="11" class="square white"></div>
+                <div id="12" class="square black"></div>
+                <div id="13" class="square white"></div>
+                <div id="14" class="square black"></div>
+                <div id="15" class="square white"></div>
+                <div id="16" class="square black"></div>
+                <div id="17" class="square white"></div>
+                <div id="18" class="square black"></div>
+            </div>
+            <div class="row">
+                <div id="21" class="square black"></div>
+                <div id="22" class="square white"></div>
+                <div id="23" class="square black"></div>
+                <div id="24" class="square white"></div>
+                <div id="25" class="square black"></div>
+                <div id="26" class="square white"></div>
+                <div id="27" class="square black"></div>
+                <div id="28" class="square white"></div>
+            </div>
+            <div class="row">
+                <div id="31" class="square white"></div>
+                <div id="32" class="square black"></div>
+                <div id="33" class="square white"></div>
+                <div id="34" class="square black"></div>
+                <div id="35" class="square white"></div>
+                <div id="36" class="square black"></div>
+                <div id="37" class="square white"></div>
+                <div id="38" class="square black"></div>
+            </div>
+            <div class="row">
+                <div id="41" class="square black"></div>
+                <div id="42" class="square white"></div>
+                <div id="43" class="square black"></div>
+                <div id="44" class="square white"></div>
+                <div id="45" class="square black"></div>
+                <div id="46" class="square white"></div>
+                <div id="47" class="square black"></div>
+                <div id="48" class="square white"></div>
+            </div>
+            <div class="row">
+                <div id="51" class="square white"></div>
+                <div id="52" class="square black"></div>
+                <div id="53" class="square white"></div>
+                <div id="54" class="square black"></div>
+                <div id="55" class="square white"></div>
+                <div id="56" class="square black"></div>
+                <div id="57" class="square white"></div>
+                <div id="58" class="square black"></div>
+            </div>
+            <div class="row">
+                <div id="61" class="square black"></div>
+                <div id="62" class="square white"></div>
+                <div id="63" class="square black"></div>
+                <div id="64" class="square white"></div>
+                <div id="65" class="square black"></div>
+                <div id="66" class="square white"></div>
+                <div id="67" class="square black"></div>
+                <div id="68" class="square white"></div>
+            </div>
+            <div class="row">
+                <div id="71" class="square white"></div>
+                <div id="72" class="square black"></div>
+                <div id="73" class="square white"></div>
+                <div id="74" class="square black"></div>
+                <div id="75" class="square white"></div>
+                <div id="76" class="square black"></div>
+                <div id="77" class="square white"></div>
+                <div id="78" class="square black"></div>
+            </div>
+            <div class="row">
+                <div id="81" class="square black"></div>
+                <div id="82" class="square white"></div>
+                <div id="83" class="square black"></div>
+                <div id="84" class="square white"></div>
+                <div id="85" class="square black"></div>
+                <div id="86" class="square white"></div>
+                <div id="87" class="square black"></div>
+                <div id="88" class="square white"></div>
+            </div>
+        </div>
+    <button onclick="goBack()">Go Back to Main Page</button>
+
+    </div>
+
+    <script>
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+let curBoard;
+let curPlayer;
+
+let curHeldPiece;
+let curHeldPieceStartingPosition;
+
+function startGame() {
+    const starterPosition = [['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
+    ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+    ['.', '.', '.', '.', '.', '.', '.', '.'],
+    ['.', '.', '.', '.', '.', '.', '.', '.'],
+    ['.', '.', '.', '.', '.', '.', '.', '.'],
+    ['.', '.', '.', '.', '.', '.', '.', '.'],
+    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+    ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']];
+
+    const starterPlayer = 'white';
+
+    loadPosition(starterPosition, starterPlayer);
+}
+
+function loadPosition(position, playerToMove) {
+    curBoard = position;
+    curPlayer = playerToMove;
+
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+            if (position[i][j] != '.') {
+                loadPiece(position[i][j], [i + 1, j + 1]);
+            }
+        }
+    }
+}
+
+function loadPiece(piece, position) {
+    const squareElement = document.getElementById(`${position[0]}${position[1]}`);
+
+    const pieceElement = document.createElement('img');
+    pieceElement.classList.add('piece');
+    pieceElement.id = piece;
+    pieceElement.draggable = false;
+    pieceElement.src = getPieceImageSource(piece);
+
+    squareElement.appendChild(pieceElement);
+}
+
+function getPieceImageSource(piece) {
+    switch (piece) {
+        case 'R': return 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Chess_rdt45.svg/45px-Chess_rdt45.svg.png';
+        case 'N': return 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Chess_ndt45.svg/45px-Chess_ndt45.svg.png';
+        case 'B': return 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Chess_bdt45.svg/45px-Chess_bdt45.svg.png';
+        case 'Q': return 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Chess_qdt45.svg/45px-Chess_qdt45.svg.png';
+        case 'K': return 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Chess_kdt45.svg/45px-Chess_kdt45.svg.png';
+        case 'P': return 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Chess_pdt45.svg/45px-Chess_pdt45.svg.png';
+        case 'r': return 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Chess_rlt45.svg/45px-Chess_rlt45.svg.png';
+        case 'n': return 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Chess_nlt45.svg/45px-Chess_nlt45.svg.png';
+        case 'b': return 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Chess_blt45.svg/45px-Chess_blt45.svg.png';
+        case 'q': return 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Chess_qlt45.svg/45px-Chess_qlt45.svg.png';
+        case 'k': return 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Chess_klt45.svg/45px-Chess_klt45.svg.png';
+        case 'p': return 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Chess_plt45.svg/45px-Chess_plt45.svg.png';
+    }
+}
+
+function setPieceHoldEvents() {
+    let mouseX, mouseY = 0;
+
+    document.addEventListener('mousemove', function(event) {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+    });
+
+    let pieces = document.getElementsByClassName('piece');
+    let movePieceInterval;
+    let hasIntervalStarted = false;
+
+    for (const piece of pieces) {
+        piece.addEventListener('mousedown', function(event) {
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+        
+            if (hasIntervalStarted === false) {
+                piece.style.position = 'absolute';
+
+                curHeldPiece = piece;
+                const curHeldPieceStringPosition = piece.parentElement.id.split('');
+
+                curHeldPieceStartingPosition = [parseInt(curHeldPieceStringPosition[0]) - 1, parseInt(curHeldPieceStringPosition[1]) - 1];
+
+                movePieceInterval = setInterval(function() {
+                    piece.style.top = mouseY - piece.offsetHeight / 2 + window.scrollY + 'px';
+                    piece.style.left = mouseX - piece.offsetWidth / 2 + window.scrollX + 'px';
+                }, 1);
+        
+                hasIntervalStarted = true;
+            }
+        });
+    }
+        
+    document.addEventListener('mouseup', function(event) {
+        window.clearInterval(movePieceInterval);
+
+        if (curHeldPiece != null) {
+            const boardElement = document.querySelector('.board');
+
+            if ((event.clientX > boardElement.offsetLeft - window.scrollX && event.clientX < boardElement.offsetLeft + boardElement.offsetWidth - window.scrollX) &&
+                (event.clientY > boardElement.offsetTop - window.scrollY && event.clientY < boardElement.offsetTop + boardElement.offsetHeight - window.scrollY)) {
+                    const mousePositionOnBoardX = event.clientX - boardElement.offsetLeft + window.scrollX;
+                    const mousePositionOnBoardY = event.clientY - boardElement.offsetTop + window.scrollY;
+
+                    const boardBorderSize = parseInt(getComputedStyle(document.querySelector('.board'), null)
+                                                .getPropertyValue('border-left-width')
+                                                .split('px')[0]);
+
+                    const xPosition = Math.floor((mousePositionOnBoardX - boardBorderSize) / document.getElementsByClassName('square')[0].offsetWidth);
+                    const yPosition = Math.floor((mousePositionOnBoardY - boardBorderSize) / document.getElementsByClassName('square')[0].offsetHeight);
+
+                    const pieceReleasePosition = [yPosition, xPosition];
+
+                    if (!(pieceReleasePosition[0] == curHeldPieceStartingPosition[0] && pieceReleasePosition[1] == curHeldPieceStartingPosition[1])) {
+                        if (validateMovement(curHeldPieceStartingPosition, pieceReleasePosition)) {
+                            movePiece(curHeldPiece, curHeldPieceStartingPosition, pieceReleasePosition);
+                        }
+                    }
+                }
+
+            curHeldPiece.style.position = 'static';
+            curHeldPiece = null;
+            curHeldPieceStartingPosition = null;
+        }
+    
+        hasIntervalStarted = false;
+    });
+}
+
+function movePiece(piece, startingPosition, endingPosition) {
+    // move validations to validateMovement()
+    const boardPiece = curBoard[startingPosition[0]][startingPosition[1]];
+    
+    if (boardPiece != '.') {
+        if ((boardPiece === boardPiece.toUpperCase() && curPlayer == 'black') ||
+            (boardPiece === boardPiece.toLowerCase() && curPlayer == 'white')) {
+                curBoard[startingPosition[0]][startingPosition[1]] = '.';
+                curBoard[endingPosition[0]][endingPosition[1]] = boardPiece;
+
+                const destinationSquare = document.getElementById(`${endingPosition[0] + 1}${endingPosition[1] + 1}`);
+                destinationSquare.textContent = '';
+                destinationSquare.appendChild(piece);
+
+                // check if is check/checkmate
+
+                if (curPlayer == 'white') {
+                    curPlayer = 'black';
+                } else {
+                    curPlayer = 'white';
+                }
+        }
+    }
+}
+
+function validateMovement(startingPosition, endingPosition) {
+    const boardPiece = curBoard[startingPosition[0]][startingPosition[1]];
+    
+    switch (boardPiece) {
+        case 'r':
+        case 'R': return validateRookMovement(startingPosition, endingPosition);
+        case 'n':
+        case 'N': return validateKnightMovement(startingPosition, endingPosition);
+        case 'b':
+        case 'B': return validateBishopMovement(startingPosition, endingPosition);
+        case 'q':
+        case 'Q': return validateQueenMovement(startingPosition, endingPosition);
+        case 'k': 
+        case 'K': return validateKingMovement(startingPosition, endingPosition);
+        case 'p': return validatePawnMovement('white', startingPosition, endingPosition);
+        case 'P': return validatePawnMovement('black', startingPosition, endingPosition);
+    }
+}
+
+function validateBishopMovement(startingPosition, endingPosition) {
+    if (endingPosition[0] - endingPosition[1] == startingPosition[0] - startingPosition[1] ||
+        endingPosition[0] + endingPosition[1] == startingPosition[0] + startingPosition[1]) {
+            if (!validatePathIsBlocked(startingPosition, endingPosition)) {
+                return false;
+            }
+            // validate if move puts own king in check
+            return true;
+    } else {
+        return false;
+    }
+}
+
+function validateRookMovement(startingPosition, endingPosition) {
+    if (endingPosition[0] == startingPosition[0] || endingPosition[1] == startingPosition[1]) {
+        if (!validatePathIsBlocked(startingPosition, endingPosition)) {
+            return false;
+        }
+        // validate if move puts own king in check
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function validateKingMovement(startingPosition, endingPosition) {
+    if ([-1, 0, 1].includes(endingPosition[0] - startingPosition[0]) && [-1, 0, 1].includes(endingPosition[1] - startingPosition[1])) {
+        if (isFriendlyPieceOnEndingPosition(endingPosition)) {
+            return false;
+        }
+        // validate if move puts own king in check
+        // validate castling
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function validateQueenMovement(startingPosition, endingPosition) {
+    if (endingPosition[0] - endingPosition[1] == startingPosition[0] - startingPosition[1] ||
+        endingPosition[0] + endingPosition[1] == startingPosition[0] + startingPosition[1] ||
+        endingPosition[0] == startingPosition[0] || endingPosition[1] == startingPosition[1]) {
+            if (!validatePathIsBlocked(startingPosition, endingPosition)) {
+                return false;
+            }
+            // validate if move puts own king in check
+            return true;
+    } else {
+        return false;
+    }
+}
+
+function validatePawnMovement(pawnColor, startingPosition, endingPosition) {
+    direction = pawnColor == 'black' ? 1 : -1;
+
+    let isCapture = false;
+
+    if (endingPosition[0] == startingPosition[0] + direction &&
+        [startingPosition[1] - 1, startingPosition[1] + 1].includes(endingPosition[1])) {
+            // validate if is en passant
+            if (isEnemyPieceOnEndingPosition(endingPosition)) {
+                isCapture = true;
+            }
+        }
+
+    // validate if is promotion
+    let isFirstMove = false;
+
+    if ((pawnColor == 'white' && startingPosition[0] == 6) || (pawnColor == 'black' && startingPosition[0] == 1)) {
+        isFirstMove = true;
+    }
+
+    if (((endingPosition[0] == startingPosition[0] + direction || (endingPosition[0] == startingPosition[0] + direction * 2 && isFirstMove)) &&
+         endingPosition[1] == startingPosition[1]) || isCapture) {
+            if (isFriendlyPieceOnEndingPosition(endingPosition)) {
+                return false;
+            } else if (!isCapture && isEnemyPieceOnEndingPosition(endingPosition)) {
+                return false;
+            }
+
+            // validate if move puts own king in check
+            return true;
+    } else {
+        return false;
+    }
+}
+
+function validateKnightMovement(startingPosition, endingPosition) {
+    if (([-2, 2].includes(endingPosition[0] - startingPosition[0]) && [-1, 1].includes(endingPosition[1] - startingPosition[1])) || 
+        ([-2, 2].includes(endingPosition[1] - startingPosition[1]) && [-1, 1].includes(endingPosition[0] - startingPosition[0]))) {
+            if (isFriendlyPieceOnEndingPosition(endingPosition)) {
+                return false;
+            }
+            // validate if move puts own king in check
+            return true;
+    } else {
+        return false;
+    }
+}
+
+function validatePathIsBlocked(startingPosition, endingPosition) {
+    const xDifference = endingPosition[0] - startingPosition[0]
+    const yDifference = endingPosition[1] - startingPosition[1]
+
+    let xDirection = 0;
+    let yDirection = 0;
+
+    if (xDifference < 0) {
+        xDirection = -1;
+    } else if (xDifference > 0) {
+        xDirection = 1;
+    }
+
+    if (yDifference < 0) {
+        yDirection = -1;
+    } else if (yDifference > 0) {
+        yDirection = 1;
+    }
+
+    let squareX = startingPosition[0] + xDirection;
+    let squareY = startingPosition[1] + yDirection;
+
+    while (squareX != endingPosition[0] || squareY != endingPosition[1]) {
+        const isSquareOccupied = document.getElementById(`${squareX + 1}${squareY + 1}`).children.length > 0;
+
+        if (isSquareOccupied) {
+            return false;
+        }
+
+        squareX += xDirection;
+        squareY += yDirection;
+    }
+    
+    if (isFriendlyPieceOnEndingPosition(endingPosition)) {
+        return false;
+    } else {
+        // enemy piece has been captured
+    }
+
+    return true;
+}
+
+function isFriendlyPieceOnEndingPosition(endingPosition) {
+    const destinationSquare = document.getElementById(`${endingPosition[0] + 1}${endingPosition[1] + 1}`);
+
+    if (destinationSquare.children.length > 0) {
+        const destinationPiece = destinationSquare.querySelector('.piece').id;
+    
+        if (destinationPiece == destinationPiece.toUpperCase() && curPlayer == 'black' ||
+            destinationPiece == destinationPiece.toLowerCase() && curPlayer == 'white') {
+                return true;
+        } else {
+            return false;
+        }        
+    } else {
+        return false;
+    }
+}
+
+function isEnemyPieceOnEndingPosition(endingPosition) {
+    const destinationSquare = document.getElementById(`${endingPosition[0] + 1}${endingPosition[1] + 1}`);
+
+    if (destinationSquare.children.length > 0) {
+        const destinationPiece = destinationSquare.querySelector('.piece').id;
+    
+        if (destinationPiece == destinationPiece.toUpperCase() && curPlayer == 'white' ||
+            destinationPiece == destinationPiece.toLowerCase() && curPlayer == 'black') {
+                return true;
+        } else {
+            return false;
+        }        
+    } else {
+        return false;
+    }
+}
+
+startGame();
+setPieceHoldEvents();
+    </script>
+</body>
+</html>
