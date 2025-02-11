@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <style>
+
+            /* Initialize all text with the custom font and color white */
+            body {
+                font-family: 'Heebo', sans-serif;
+                color: white;
+                height: 100vh;
+                margin: 0 !important;
+            }
+            
+            
+            /* Menu panel CSS */
+            #menuPanel {
+                /* Cover the entire screen */
+                width: 100vw;
+                height: 100vh;
+                position: absolute;
+                z-index: 2;
+                background-color: #303030;
+                text-align: center;
+                padding: 0;
+            }
+            
+            /* Welcome menu content CSS */
+            .splashContent {
+                width: 20vw;
+                height: 50vh;
+                margin: 24vh 37vw;
+                padding: 1vh 3vw;
+                position: absolute;
+                z-index: 2;
+            }
+            
+            /* Welcome menu background CSS */
+            .splashBackground {
+                height: 100vh;
+                width: 100vw;
+                position: absolute;
+                /* Background kind piece */
+                background: url("../img/kd.svg") no-repeat center;
+                background-size: auto 100%;
+                animation: spin 40s linear infinite;
+                z-index: -1;
+                filter: opacity(15%);
+            }
+            
+            /* Spinning king animation */
+            @keyframes spin {
+                0% { 
+                    -webkit-transform: rotateY(-15deg) rotateX(50deg) rotateZ(31deg);
+                    transform: rotateY(-15deg) rotateX(50deg) rotateZ(31deg);
+                }
+                100% { 
+                    -webkit-transform: rotateY(345deg) rotateX(770deg) rotateZ(1111deg);
+                    transform: rotateY(345deg) rotateX(770deg) rotateZ(1111deg);
+                }
+            }
+            
+            /* Welcome menu shading */
+            .splashBackground2 {
+                height: 100vh;
+                width: 100vw;
+                position: absolute;
+                background: radial-gradient(rgba(0,0,0,0.20), #000000) no-repeat center;
+                z-index: -1;
+                overflow: hidden;
+            }
+            
+            /* Welcome menu play/rule button CSS */
+            .welcomeButton {
+                margin: 0;
+                padding: 0.6em 1.8vw;
+                background-color: #292929;
+                border: 0;
+                color: #FFFFFF;
+                border-radius: 5px;
+                text-decoration: none;
+                transition: all 0.15s ease-out;
+                font-size: 0.8vw;
+            }
+            
+            .welcomeButton:hover{
+                cursor: pointer;
+                color: #292929;
+                background-color: #E6E6E6;
+            }
+            
+            /* Welcome menu text css */
+            h4 {
+                font-weight: 300;
+                margin: 0;
+                font-size: 0.8vw;
+            }
+            
+            .modeContainer {
+                padding: 0 2vw;
+            }
+            
+            td > p {
+                margin: 0.1em;
+            }
+            
+            /* Game's chess board CSS */
+            #board {
+                width: 100vw;
+                height: 100vh;
+                background: radial-gradient(circle, rgba(64,64,64,1) 48%, rgba(0,0,0,1) 100%);
+                top: 0;
+                position: fixed;
+            }
+            
+            /* Individual chess boards */
+            #panel {
+                display: none;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                z-index: 2;
+                width: 40vmin;
+                background-color:#363434c0;
+                border-radius: 0 1vmin 0 0;
+                -webkit-box-shadow: 3px 5px 23px -6px #000000; 
+                box-shadow: 3px 5px 23px -6px #000000;
+            }
+            
+            /* Individual chess tiles */
+            .square {
+                display: inline-block;
+                margin: 0;
+                padding: 0;
+                vertical-align: top;
+                position: relative;
+                pointer-events: none;
+            }
+            
+            /* Individual levels for each board (similar to panel class but the container is not transformed) */
+            .boardLvl {
+                display: inherit; /* inherit for vertical stacking */
+                border: solid 10px #242424;
+                margin: 5px;
+                /* font-size: 0px is needed since inline-block of square creates space between divs */
+                font-size: 0px;
+                margin-left: 0%;
+                box-shadow: 5px 9px 8px -1px rgba(0,0,0,0.57);
+                transition: 0.2s;
+                animation: comein 20s;
+                opacity: 0;
+            }
+            
+            /* Animations for transition between welcome screen and game board */
+            @keyframes comeFromLeft {
+                0% {
+                    margin-right: 1000px;
+                    opacity: 0%;
+                }
+                100% {
+                    margin-right: 0;
+                    opacity: 100%;
+                }
+            }
+            
+            @keyframes fadeIn {
+                0% {
+                    opacity: 0%;
+                }
+                100% {
+                    opacity: 100%;
+                    width: 95%;
+                    height: 95%;
+                }
+            }
+            
+            /* Capture panel CSS */
+            .captureBox {
+                display: flex;
+                margin-left: -0.3vw;
+                height: 3.3vh;
+                width: auto;
+            }
+            
+            #panel p {
+                padding: 0;
+                margin: 0;
+            }
+            
+            #whitePlayer, #blackPlayer {
+                margin: 20px;
+            }
+            
+            .capturedPiece {
+                height: 100%;
+                width: auto;
+                height: auto;
+            }
+            
+            /* Move history panel CSS */
+            #movesPanel {
+                display: none;
+                height: 50vh;
+                width: 20vw;
+                top: 2vh;
+                right: 0px;
+                z-index: 10;
+                position: fixed;
+                overflow-y: auto;
+                background-color: rgb(56, 56, 56, 0.5);
+                border-radius: 0.5em 0 0 0.5em;
+                -webkit-box-shadow: 8px 5px 23px -1px #000000; 
+                box-shadow: 8px 5px 23px -1px #000000;
+            }
+            
+            /* Move history table CSS */
+            #movesBox {
+                position: relative;
+                width: 100%;
+                border-collapse: collapse;
+            }
+            
+            #movesBox th {
+                font-family: Heebo;
+                position: -webkit-sticky;
+                position: sticky;
+                text-align: center;
+                top: 0;
+                padding: 1px;
+                font-size: 1vw;
+                background-color: #0f0f0f;
+                color: rgb(221, 221, 221, 0.75);
+                z-index: 10;
+                padding: 0.3em 0;
+            }
+            
+            #movesBox img {
+                padding: 1px;
+                transform: translateY(5px);
+                -webkit-transform: translateY(5px);
+                margin-left: 2em;
+            }
+            
+            /* Move history scroll bar */
+            ::-webkit-scrollbar {
+                width: 5px;
+            }
+            
+            ::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.1);
+            }
+            
+            ::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.397);
+            }
+            
+            /* Chess images for the board */
+            .chessImg {
+                /* Center image horizontally and vertically */
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 95%;
+                height: 95%;
+                z-index: 3;
+                /* Disable highlight on image */
+                -khtml-user-select: none;
+                -o-user-select: none;
+                -moz-user-select: none;
+                -webkit-user-select: none;
+                user-select: none;
+                /* Apply visual effect filters (blur(0) is to sharpen the pictures) */
+                filter: blur(0) drop-shadow(2px 2px 2px rgba(34, 34, 34, 0.527));
+                /* Apply transformations for 3D perspective */
+                transform: translate(-75%, -90%) rotateX(52deg) rotateZ(5deg) skew(22deg) scale3d(1.0, 3.0, 1.0);
+                -webkit-transform: translate(-75%, -90%) rotateX(52deg) rotateZ(5deg) skew(22deg) scale3d(1.0, 3.0, 1.0);
+                opacity: 0;
+                
+            }
+            
+            /* Flipped version of the chess images */
+            .chessImgFlipped {
+                transform: translate(-20%, -0%) rotateX(52deg) rotateZ(5deg) skew(22deg) scale3d(1.0, 3.0, 1.0) rotateZ(180deg);
+                -webkit-transform: translate(-20%, -0%) rotateX(52deg) rotateZ(5deg) skew(22deg) scale3d(1.0, 3.0, 1.0) rotateZ(180deg);
+            }
+            
+            .pieceHitbox {
+                position: absolute;
+                pointer-events: auto;
+                width: 100%;
+                height: 100%;
+                z-index: 4;
+            }
+            
+            /* Red glow to show that the king is checked */
+            #checked {
+                filter: drop-shadow(0px 0px 5px rgb(255, 0, 0)) drop-shadow(0px 0px 10px rgba(255, 0, 0, 0.904)) drop-shadow(0px 0px 15px rgba(255, 0, 0, 0.87));
+            }
+            
+            /* Visual colors for the move highlights and other chess tile colors */
+            .darkCol {
+                background-color: rgb(221, 169, 115);
+            }
+            
+            .lightCol {
+                background-color: rgb(250, 212, 164);
+            }
+            
+            .legalTint {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(255, 0, 0, 0.568);
+                z-index: 2;
+                pointer-events: auto;
+            }
+            
+            .removeLegal {
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0);
+                pointer-events: auto;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 1;
+            }
+            
+            .lastMoveTint {
+                width: 100%;
+                height: 100%;
+                z-index: 1;
+                background-color: rgba(255, 217, 0, 0.397);
+                pointer-events: none;
+            }
+            
+            .pieceSelectTint {
+                width: 100%;
+                pointer-events: auto;
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                z-index: 2;
+                background-color: rgba(0, 255, 64, 0.397);
+            }
+            
+            /* Promotion panel CSS */
+            #promotePanel {
+                display: none;
+                margin: 0;
+                position:fixed;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                z-index: 10;
+                transition: 0.5s;
+                background-color: rgba(0, 0, 0, 0.682);
+            }
+            
+            #pieceHolder {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                -webkit-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+                width: auto;
+                height: auto;
+            }
+            
+            .promoteImg {
+                width: 7em;
+                margin: 1em;
+                transition: 0.5s;
+            }
+            
+            .promoteImg:hover {
+                background-color: rgba(255, 255, 255, 0.349);
+            }
+            
+            /* Play again button CSS */
+            #playAgain {
+                position: fixed;
+                display: none;
+                top: 7vh;
+                left: 1vw;
+            }
+            
+            .playAgainButton {
+                margin: 0;
+                padding: 0.5vh 2vw;
+                background-color: #292929;
+                color: #FFFFFF;
+                border-radius: 4px;
+                text-decoration: none;
+                transition: all 0.15s ease-out;
+            }
+            
+            .playAgainButton:hover{
+                cursor: pointer;
+                color: #292929;
+                background-color: #E6E6E6;
+            }
+            
+            /* Game status container CSS */
+            #statusContainer {
+                display: none;
+            }
+            
+            #status {
+                font-size: 4em;
+                color: white;
+                position: fixed;
+                text-align: right;
+                bottom: -4px;
+                right: 0;
+                z-index: 10;
+                text-transform: uppercase;
+                margin-bottom: 0;
+                line-height: 0.8em;
+                font-weight: 500;
+                opacity: 0.5;
+            }
+            
+            /* Radio Buttons CSS */
+            [type=radio] { 
+                /* Hide the actual radio button, replaced with the pictures */
+                position: absolute;
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+            
+            /* Set the cursor to point on the image */
+            [type=radio] + img {
+                cursor: pointer;
+            }
+            
+            /* Radio button images and hover CSS */
+            /* Player v player radio button */
+            #rad1 {
+                width: 2vw;
+                height: 2vw;
+                background: url("../img/kd.svg") no-repeat center;
+                background-size: 100%;
+                transition: all 0.15s ease-out;
+            }
+            #rad1:hover {
+                background: url("../img/kl.svg") no-repeat center;
+                background-size: 100%;
+                cursor: pointer;
+            }
+            [type=radio]:checked + #rad1 {
+                background: url("../img/kl.svg") no-repeat center;
+                background-size: 100%;
+            }
+            
+            /* Easy cpu radio button */
+            #rad2 {
+                width: 2vw;
+                height: 2vw;
+                background: url("../img/nd.svg") no-repeat center;
+                background-size: 100%;
+                transition: all 0.15s ease-out;
+            }
+            #rad2:hover {
+                background: url("../img/nl.svg") no-repeat center;
+                background-size: 100%;
+                cursor: pointer;
+            }
+            [type=radio]:checked + #rad2 {
+                background: url("../img/nl.svg") no-repeat center;
+                background-size: 100%;
+            }
+            
+            /* Normal cpu radio button */
+            #rad3 {
+                width: 2vw;
+                height: 2vw;
+                background: url("../img/rd.svg") no-repeat center;
+                background-size: 100%;
+                transition: all 0.15s ease-out;
+            }
+            #rad3:hover {
+                background: url("../img/rl.svg") no-repeat center;
+                background-size: 100%;
+                cursor: pointer;
+            }
+            [type=radio]:checked + #rad3 {
+                background: url("../img/rl.svg") no-repeat center;
+                background-size: 100%;
+            }
+            
+            /* Hard cpu radio button */
+            #rad4 {
+                width: 2vw;
+                height: 2vw;
+                background: url("../img/qd.svg") no-repeat center;
+                background-size: 100%;
+                transition: all 0.15s ease-out;
+            }
+            #rad4:hover {
+                background: url("../img/ql.svg") no-repeat center;
+                background-size: 100%;
+                cursor: pointer;
+            }
+            [type=radio]:checked + #rad4 {
+                background: url("../img/ql.svg") no-repeat center;
+                background-size: 100%;
+            }
+            
+            /* Color selection CSS */
+            .colorSelect {
+                width: 18vw;
+                margin: 0 1vw;
+                border-collapse: collapse;
+            }
+            
+            .colorSelect td {
+                padding: 1vh 0 0 0;
+            }
+            
+            .colorSelect div {
+                margin: 0 0.5vw;
+            }
+            
+            /* White radio color select CSS */
+            #radWhite {
+                position: relative;
+                width: 5vw;
+                height: 5vw;
+                background: url("../img/pl.svg") no-repeat center, #292929;
+                transition: all 0.2s ease;
+                border-radius: 0.2em;
+                box-sizing: border-box;
+            }
+            #radWhite:hover {
+                background: url("../img/pl.svg") no-repeat center, #2d2d2d;
+                cursor: pointer;
+            }
+            [type=radio]:checked + #radWhite {
+                background: url("../img/pl.svg") no-repeat center, #292929;
+                border: 3px solid #e0e0e0;
+                box-shadow: 0 0 0 3px rgb(127, 166, 80);
+            }
+            
+            /* Random radio color select CSS */
+            #radRand {
+                position: relative;
+                width: 5vw;
+                height: 5vw;
+                vertical-align: middle;
+                background: url("../img/mixed.svg") no-repeat center, #292929;
+                transition: all 0.2s ease;
+                border-radius: 0.2em;
+                box-sizing: border-box;
+            }
+            #radRand:hover {
+                background: url("../img/mixed.svg") no-repeat center, #2d2d2d;
+                cursor: pointer;
+            }
+            [type=radio]:checked + #radRand {
+                background: url("../img/mixed.svg") no-repeat center, #292929;
+                border: 3px solid #e0e0e0;
+                box-shadow: 0 0 0 3px rgb(127, 166, 80);
+            }
+            
+            /* Black radio color select CSS */
+            #radBlack {
+                position: relative;
+                width: 5vw;
+                height: 5vw;
+                background: url("../img/pd.svg") no-repeat center, #292929;
+                transition: all 0.2s ease;
+                border-radius: 0.2em;
+                box-sizing: border-box;
+            }
+            #radBlack:hover {
+                background: url("../img/pd.svg") no-repeat center, #2d2d2d;
+                cursor: pointer;
+            }
+            [type=radio]:checked + #radBlack {
+                background: url("../img/pd.svg") no-repeat center, #292929;
+                border: 3px solid #e0e0e0;
+                box-shadow: 0 0 0 3px rgb(127, 166, 80);
+            }
+            
+            /* Player v. player color select warning CSS */
+            #selectWarning {
+                position: fixed;
+                transform: translateY(calc(-2.5vw - 0.8em));
+                -webkit-transform: translateY(calc(-2.5vw - 0.8em));
+                left: calc(50% - 5.75vw + 0.15em);
+                background: #0d0d0d;
+                padding: 0.5vw;
+                visibility: hidden;
+                transition: all 0.2s ease;
+                opacity: 0;
+                border-radius: 0.3vw;
+                cursor: not-allowed;
+            }
+            
+            #selectWarning p {
+                font-size: 0.5vw;
+                margin: 0;
+            }
+            
+            /* Current board evaluation bar CSS */
+            #barBorder {
+                position: fixed;
+                height: 3vh;
+                width: 20vw;
+                top: 2vh;
+                left: 1vw;
+                border: 2px solid #dbdbdb;
+                background-color: #171717;
+                transition: all 0.2s ease-out;
+            }
+            
+            #progressBar {
+                height: 3vh;
+                width: 50%;
+                background-color: #dbdbdb;
+                transition: all 0.2s ease-out;
+            }
+            
+            /* Evaluation bar text CSS */
+            #scoreIndicator {
+                color: #dbdbdb;
+                mix-blend-mode: difference;
+                margin: 0;
+                padding-left: 0.5em;
+                line-height: calc(3vh + 2px);
+                font-weight: 300;
+                position: fixed;
+            }
+        </style>
+        <!-- Load custom font -->
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500&display=swap" rel="stylesheet">
+        <!-- Favicon and Title -->
+        <link rel="icon" type="image/png" href="img/ud.svg"/>
+        <title>3D-Chess</title>
+    </head>
+    <body>
+        <!-- Welcome panel -->
+        <div id="menuPanel">
+            <!-- Welcome background -->
+            <div class="splashBackground2">
+                <div class="splashBackground"></div>
+            </div>
+            <!-- Welcome content -->
+            <div class="splashContent">
+                <h1 style="text-align:center; margin-bottom:0;">3D-CHESS</h1>
+                <h4 style="text-align:center; margin-top:0;">RAUMSCHACH VARIANT</h4>
+                <!-- Display game mode options to the user -->
+                <h3 style="text-align:center; margin-bottom:0;">GAME MODE</h3>
+                <div class="modeContainer">
+                    <!-- Player v. Player -->
+                    <label>
+                        <table>
+                            <tr>
+                                <td>
+                                    <input id="sel1" type="radio" name="test" value="-1">
+                                    <div id="rad1" src="img/kd.svg"></div>
+                                </td>
+                                <td style="padding:0;"><h4>Player vs. Player</h4></td>
+                            </tr>
+                        </table>
+                    </label>
+                    <!-- Easy CPU -->
+                    <label>
+                        <table>
+                            <tr>
+                                <td>
+                                    <input id="sel2" type="radio" name="test" value="0" checked>
+                                    <div id="rad2" src="img/nd.svg"></div>
+                                </td>
+                                <td style="padding:0;"><h4>Player vs. Computer (Easy)</h4></td>
+                            </tr>
+                        </table>
+                    </label>
+                    <!-- Normal CPU -->
+                    <label>
+                        <table>
+                            <tr>
+                                <td>
+                                    <input id="sel3" type="radio" name="test" value="1">
+                                    <div id="rad3" src="img/rd.svg"></div>
+                                </td>
+                                <td style="padding:0;"><h4>Player vs. Computer (Normal)</h4></td>
+                            </tr>
+                        </table>
+                    </label>
+                    <!-- Hard CPU -->
+                    <label>
+                        <table>
+                            <tr>
+                                <td>
+                                    <input id="sel4" type="radio" name="test" value="2">
+                                    <div id="rad4" src="img/qd.svg"></div>
+                                </td>
+                                <td style="padding:0;"><h4>Player vs. Computer (Hard)</h4></td>
+                            </tr>
+                        </table>
+                    </label>
+                </div>
+                <!-- Create a toggle button for the player to choose if they want to play as white and black -->
+                <div>
+                    <table class="colorSelect">
+                        <tr>
+                            <td colspan="3">
+                                <h4 id="chosenColor" style="display: inline-block;">I PLAY AS</h4>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>
+                                    <input id="selWhite" type="radio" name="color" value="1" checked>
+                                    <div id="radWhite" src="img/kd.svg"></div>
+                                </label>
+                            </td>
+                            <td>
+                                <label>
+                                    <input id="selRand" type="radio" name="color" value="0">
+                                    <div id="radRand" src="img/mixed.svg"></div>
+                                </label>
+                            </td>
+                            <td>
+                                <label>
+                                    <input id="selBlack" type="radio" name="color" value="-1">
+                                    <div id="radBlack" src="img/kd.svg"></div>
+                                </label>
+                            </td>
+                        </tr>
+                    </table>
+                    <div id="selectWarning">
+                        <p>You cannot select your color for 2-player mode</p>
+                    </div>
+                </div>
+                <!-- Buttons for the user to start the game or read the rules / history of Raumschach -->
+                <center style="margin-top: 2vh;">
+                    <table>
+                        <tr>
+                            <td><a class="welcomeButton" id="submitButton">Play&nbsp ▶</a></td>
+                            <td><a class="welcomeButton" href="https://www.chessvariants.com/3d.dir/3d5.html" target="_blank")>&nbsp Rules &nbsp</a></td>
+                        </tr>
+                    </table>
+                </center>
+            </div>
+        </div>
+        <!-- Capture panel -->
+        <div id="panel">
+            <div id="blackPlayer"><p></p><div class="captureBox"></div></div>
+            <div id="whitePlayer"><p></p><div class="captureBox"></div></div>
+        </div>
+        <!-- Game board -->
+        <center><div id="board"></div></center>
+        <!-- Game status container -->
+        <div id="statusContainer"><p id="status"></p></div>
+        <!-- Move history panel -->
+        <div id="movesPanel">
+            <table id="movesBox">
+                <tr>
+                    <th>White's moves</th>
+                    <th>Black's moves</th>
+                </tr>
+            </table>
+        </div>
+        <!-- Play again button -->
+        <div id="playAgain"><a class="playAgainButton" onclick="location.reload()">New game</a></div>
+        <!-- Evaluation bar -->
+        <div id="barBorder">
+            <div id="progressBar"><p id="scoreIndicator"><b>EVAL</b> 0.00</p></div>
+        </div>
+        <!-- Promotion panel -->
+        <div id="promotePanel"><div id="pieceHolder"></div</div>
+        <!-- Load js and webassembly files -->
+        <script type="text/javascript" src="gen/a.out.js"></script>
+        <script type="text/javascript" src="js/board.js"></script>
+        <script type="text/javascript" src="js/menu.js"></script>
+        <script type="text/javascript" src="js/panel.js"></script>
+        <script type="text/javascript" src="js/moves.js"></script>
+        <script type="text/javascript" src="js/bar.js"></script>
+        <script>
+            var board;
+            Module.onRuntimeInitialized = _ => {
+                var panel = new Panel();
+                var moves = new Moves();
+                var evalBar = new Bar();
+                board = new Board(panel, moves, evalBar);
+                board.renderBoard();
+                board.renderPieces();
+                document.getElementById("board").style.display = "none";
+                // document.getElementById()
+                var menu = new Menu(board, panel);
+            };
+        </script>
+    </body>
+</html>
