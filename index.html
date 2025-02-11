@@ -57,6 +57,22 @@
             border: 1px solid #333;
         }
 
+        .chess-link1:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px #66CCCC;
+            border-color: #66CCCC;
+        }
+
+        .chess-link1 {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #333;
+        }
+
         .chess-link:hover {
             transform: scale(1.1);
             box-shadow: 0 0 10px #66CCCC;
@@ -210,9 +226,16 @@
             <h1 class="galactic-text glow glow-effect">Galactic Chess Odyssey</h1>
         </div>
         <div class="chess-links">
-            <div class="chess-link" onclick="navigateTo('1D_Chess.html')">1D Chess: The Cosmic Line</div>
-            <div class="chess-link" onclick="navigateTo('2D_Chess.html')">2D Chess: The Galactic Plane</div>
-            <div class="chess-link" onclick="navigateTo('3D_Chess/web/3D_Chess.html')">3D Chess: The Stellar Cube</div>
+            <div class="chess-link" onclick="navigateTo('1D_Chess.html')">1D Chess</div>
+            <div class="chess-link" onclick="navigateTo('2D_Chess.html')">2D Chess</div>
+            <div class="chess-link1">3D Chess</div>
+			<script>
+			$(document).ready(function(){
+				$('.chess-link1').click(function(){
+					window.location.href = '/3D_Chess/web/3D_Chess.html';
+				});
+			});
+			</script>
             <div class="chess-link" onclick="navigateTo('4D_Chess.html')">4D Chess: The Tesseract Odyssey</div>
             <div class="chess-link" onclick="navigateTo('5D_Chess.html')">5D Chess: The Hyperspace Challenge</div>
         </div>
@@ -222,7 +245,7 @@
         </div>
         <canvas id="chessboard" width="400" height="400"></canvas>
         <div class="footer">
-            <p>&copy; 2025 Galactic Chess Odyssey. All Rights Reserved.</p>
+            <p>&copy; 2025 Purple dude with a golf cap. All Rights Reserved.</p>
         </div>
     </div>
     <script>
