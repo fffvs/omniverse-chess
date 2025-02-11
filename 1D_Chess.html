@@ -216,10 +216,13 @@
         <div id="turnIndicator"></div>
         <div id="winMessage"></div>
         <button class="reset-button" id="resetButton" style="display: none;">Reset Game</button>
-        <a href="https://rowan441.github.io/MathematicalChessHub/index.html" class="back-button">Go Back</a>
+    <button onclick="goBack()">Go Back to Main Page</button>
     </div>
 
     <script>
+        function goBack() {
+            window.location.href = 'index.html';
+        }
         const boardSize = 8;
         let boardState = ['bK', 'bN', 'bR', null, null, 'wR', 'wN', 'wK']; // bK = black King, bN = black Knight, bR = black Rook, wR = white Rook, wN = white Knight, wK = white King
         let selectedPieceIndex = null;
