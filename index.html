@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galactic Chess Odyssey</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: linear-gradient(to bottom, #03055B, #050A1F);
+            background-size: 100% 100%;
+            background-attachment: fixed;
+            color: white;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5));
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-section {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .galactic-text {
+            text-shadow: 0 0 5px #66CCCC;
+        }
+
+        .chess-links {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .chess-link {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #333;
+        }
+
+        .chess-link:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px #66CCCC;
+            border-color: #66CCCC;
+        }
+
+        .math-insights {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .math-insights p {
+            font-size: 1.1em;
+        }
+
+        #chessboard {
+            border: 1px solid #333;
+            background-color: #111;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: #FFF;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.5;
+            }
+        }
+
+        .star1 {
+            top: 10%;
+            left: 20%;
+            animation-delay: 0.5s;
+        }
+
+        .star2 {
+            top: 30%;
+            left: 50%;
+            animation-delay: 1s;
+        }
+
+        .star3 {
+            top: 50%;
+            left: 80%;
+            animation-delay: 1.5s;
+        }
+
+        .star4 {
+            top: 70%;
+            left: 10%;
+            animation-delay: 2s;
+        }
+
+        .star5 {
+            top: 90%;
+            left: 60%;
+            animation-delay: 2.5s;
+        }
+
+        .nebula {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://source.unsplash.com/1600x900/?galaxy');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.2;
+            z-index: -1;
+        }
+
+        .glow {
+            text-shadow: 0 0 10px #66CCCC;
+        }
+
+        .glow-effect {
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0% {
+                text-shadow: 0 0 10px #66CCCC;
+            }
+            50% {
+                text-shadow: 0 0 20px #66CCCC;
+            }
+            100% {
+                text-shadow: 0 0 10px #66CCCC;
+            }
+        }
+
+        .ribbon {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: #66CCCC;
+            animation: ribbon 2s infinite;
+        }
+
+        @keyframes ribbon {
+            0% {
+                transform: scaleX(0);
+            }
+            100% {
+                transform: scaleX(1);
+            }
+        }
+
+        .footer {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            text-align: center;
+            margin-top: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="star star1"></div>
+    <div class="star star2"></div>
+    <div class="star star3"></div> 
+    <div class="star star4"></div>
+    <div class="star star5"></div>
+    <div class="nebula"></div>
+    <div class="container">
+        <div class="header-section">
+            <div class="ribbon"></div>
+            <h1 class="galactic-text glow glow-effect">Galactic Chess Odyssey</h1>
+        </div>
+        <div class="chess-links">
+            <div class="chess-link" onclick="navigateTo('1D_Chess.html')">1D Chess: The Cosmic Line</div>
+            <div class="chess-link" onclick="navigateTo('2D_Chess.html')">2D Chess: The Galactic Plane</div>
+            <div class="chess-link" onclick="navigateTo('3D_Chess.html')">3D Chess: The Stellar Cube</div>
+            <div class="chess-link" onclick="navigateTo('4D_Chess.html')">4D Chess: The Tesseract Odyssey</div>
+            <div class="chess-link" onclick="navigateTo('5D_Chess.html')">5D Chess: The Hyperspace Challenge</div>
+        </div>
+        <div class="math-insights">
+            <h2 class="galactic-text glow glow-effect">Mathematical Insights</h2>
+            <p>Chess, in all its forms, is deeply rooted in mathematical concepts such as combinatorics, graph theory, and geometry, guiding us through the vast expanse of the cosmos.</p>
+        </div>
+        <canvas id="chessboard" width="400" height="400"></canvas>
+        <div class="footer">
+            <p>&copy; 2025 Galactic Chess Odyssey. All Rights Reserved.</p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded');
+            // Add any initialization code here
+        });
+
+        const canvas = document.getElementById('chessboard');
+        const ctx = canvas.getContext('2d');
+
+        // Draw a simple chessboard with a galactic twist
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                if ((i + j) % 2 === 0) {
+                    ctx.fillStyle = '#333'; // Dark space
+                } else {
+                    ctx.fillStyle = '#666'; // Light nebula
+                }
+                ctx.fillRect(i * 50, j * 50, 50, 50);
+            }
+        }
+
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+    </script>
+</body>
+</html>
