@@ -319,7 +319,7 @@ class Board {
 
     createChessImage(id) {
         var img = document.createElement("img");
-        img.src = "../img" + id + ".svg";
+        img.src = "img/" + id + ".svg"; // Correct path relative to index.html
         img.dataset["id"] = id;
         return img;
     }
