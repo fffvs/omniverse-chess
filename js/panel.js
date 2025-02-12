@@ -34,7 +34,7 @@ class Panel {
 	// creates a piece image element
     makePiece(pieceName) {
         var img = document.createElement("img");
-        img.src = "../img/" + pieceName + ".svg";
+        img.src = "img/" + pieceName + ".svg";
         img.className = "capturedPiece";
         img.dataset.type = pieceName[0];
         return img;

@@ -78,7 +78,7 @@ class Menu {
             this.board.changeClickability(true, false);
         }
 
-        var gameStart = new Audio("../sfx/game-start.wav");
+        var gameStart = new Audio("sfx/game-start.wav");
         gameStart.play();
     }
 }

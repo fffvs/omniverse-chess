@@ -7,7 +7,7 @@ class Moves {
     addMove(pieceId, info, color, curRow, curCol, curLvl, newRow, newCol, newLvl) {
         var imgFileName = String(pieceId.toLowerCase()) + ".svg";
         var movement =
-            '<img src="../img/' +
+            '<img src="img/' +
             imgFileName +
             '" width="20px">' +
             String.fromCharCode("A".charCodeAt(0) + curLvl) +
