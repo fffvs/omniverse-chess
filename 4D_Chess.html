@@ -1,0 +1,1346 @@
+<html>
+<head>
+<script>
+	var config = {
+    'size':[3,3,5,5],
+    'dimCombos':[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]],
+    'default':'Spread',
+    'displayOrder':['pawn','rook','bishop','unicorn','knight','snowman','king','elderly king','peaceful king','elderly peaceful king','queen','ghost','star','telephone','turncoat','empress'],
+    'star':{'spaces':4},
+    'turncoat':'slowboi',
+    'numOfPieces':20,
+    'random':{
+        'pawn':10,
+        'rook':2,
+        'bishop':2,
+        'unicorn':2,
+        'knight':2,
+        'snowman':2,
+        'queen':1,
+        'ghost':2,
+        'star':1,
+        'telephone':1,
+        'empress':1
+    },
+    'highlight':{
+        'w':'#ffffb3',
+        'b':'#999999',
+        'o':'#ffffb3',
+        'threat':'#ff8080',
+        'moves':'#92cbdd',
+        'alt':'#faf2db',
+        'nextMoves':'#ebf5f9',
+    },'orientation':[0,1,2,3],
+    'showNextMoves':false,
+}
+var create = {'team':{}};
+create.team.Spread = function(){
+    config.size = [3,3,5,5];
+    config.displayOrder = ['pawn','rook','bishop','unicorn','knight','king','queen','ghost'];
+    config.orientation = [0,1,2,3];
+    // 1,1
+    board[[1,1,4,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,4,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,4,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,0,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,0,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    // 0,1
+    board[[0,1,4,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,1,3,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,1,4,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,1,4,2]] = {'piece':'knight','team':'b'};
+    board[[0,1,0,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,1,1,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,1,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,1,0,2]] = {'piece':'knight','team':'w'};
+    // 2,1
+    board[[2,1,4,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,1,3,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,1,4,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,1,4,2]] = {'piece':'knight','team':'b'};
+    board[[2,1,0,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,1,1,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,1,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,1,0,2]] = {'piece':'knight','team':'w'};
+    // 1,0
+    board[[1,0,4,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,0,4,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,0,4,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,0,0,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,0,1,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,0,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,0,0,2]] = {'piece':'king','team':'w'};
+    // 1,2
+    board[[1,2,4,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,2,3,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,2,4,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,2,4,2]] = {'piece':'king','team':'b'};
+    board[[1,2,0,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,2,0,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,2,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    // 0,2
+    board[[0,2,4,1]] = {'piece':'rook','team':'b'};
+    board[[0,2,4,2]] = {'piece':'queen','team':'b'};
+    board[[0,2,4,3]] = {'piece':'unicorn','team':'b'};
+    board[[0,2,3,2]] = {'piece':'bishop','team':'b'};
+    // 2,2
+    board[[2,2,4,1]] = {'piece':'rook','team':'b'};
+    board[[2,2,4,2]] = {'piece':'ghost','team':'b'};
+    board[[2,2,4,3]] = {'piece':'unicorn','team':'b'};
+    board[[2,2,3,3]] = {'piece':'bishop','team':'b'};
+    // 0,0
+    board[[0,0,0,3]] = {'piece':'rook','team':'w'};
+    board[[0,0,0,2]] = {'piece':'ghost','team':'w'};
+    board[[0,0,0,1]] = {'piece':'unicorn','team':'w'};
+    board[[0,0,1,1]] = {'piece':'bishop','team':'w'};
+    // 2,0
+    board[[2,0,0,3]] = {'piece':'rook','team':'w'};
+    board[[2,0,0,2]] = {'piece':'queen','team':'w'};
+    board[[2,0,0,1]] = {'piece':'unicorn','team':'w'};
+    board[[2,0,1,2]] = {'piece':'bishop','team':'w'};
+}
+create.team['Spread - Extra Pieces'] = function(){
+    config.size = [3,3,5,5];
+    config.displayOrder = ['pawn','rook','bishop','unicorn','knight','king','queen','ghost','turncoat','star','snowman','empress'];
+    config.turncoat = 'slowboi';
+    config.orientation = [0,1,2,3];
+    // 1,1
+    board[[1,1,4,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,4,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,4,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,0,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,0,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,2,2]] = {'piece':'turncoat','team':'o'};
+    // 0,1
+    board[[0,1,4,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,1,3,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,1,4,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,1,4,2]] = {'piece':'knight','team':'b'};
+    board[[0,1,0,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,1,1,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,1,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,1,0,2]] = {'piece':'knight','team':'w'};
+    // 2,1
+    board[[2,1,4,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,1,3,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,1,4,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,1,4,2]] = {'piece':'knight','team':'b'};
+    board[[2,1,0,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,1,1,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,1,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,1,0,2]] = {'piece':'knight','team':'w'};
+    // 1,0
+    board[[1,0,4,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,0,4,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,0,4,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,0,0,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,0,1,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,0,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,0,0,2]] = {'piece':'king','team':'w'};
+    board[[1,0,1,1]] = {'piece':'snowman','team':'w'};
+    board[[1,0,1,3]] = {'piece':'snowman','team':'w'};
+    // 1,2
+    board[[1,2,4,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,2,3,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,2,4,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,2,4,2]] = {'piece':'king','team':'b'};
+    board[[1,2,3,1]] = {'piece':'snowman','team':'b'};
+    board[[1,2,3,3]] = {'piece':'snowman','team':'b'};
+    board[[1,2,0,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,2,0,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,2,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    // 0,2
+    board[[0,2,4,1]] = {'piece':'rook','team':'b'};
+    board[[0,2,4,2]] = {'piece':'queen','team':'b'};
+    board[[0,2,4,3]] = {'piece':'bishop','team':'b'};
+    board[[0,2,3,2]] = {'piece':'unicorn','team':'b'};
+    // 2,2
+    board[[2,2,4,1]] = {'piece':'rook','team':'b'};
+    board[[2,2,4,2]] = {'piece':'ghost','team':'b'};
+    board[[2,2,4,3]] = {'piece':'unicorn','team':'b'};
+    board[[2,2,3,3]] = {'piece':'bishop','team':'b'};
+    board[[2,2,3,2]] = {'piece':'star','team':'b'};
+    // 0,0
+    board[[0,0,0,3]] = {'piece':'rook','team':'w'};
+    board[[0,0,0,2]] = {'piece':'ghost','team':'w'};
+    board[[0,0,0,1]] = {'piece':'unicorn','team':'w'};
+    board[[0,0,1,1]] = {'piece':'bishop','team':'w'};
+    board[[0,0,1,2]] = {'piece':'star','team':'w'};
+    // 2,0
+    board[[2,0,0,3]] = {'piece':'rook','team':'w'};
+    board[[2,0,0,2]] = {'piece':'queen','team':'w'};
+    board[[2,0,0,1]] = {'piece':'bishop','team':'w'};
+    board[[2,0,1,2]] = {'piece':'unicorn','team':'w'};
+}
+create.team['Spread - Better Pawn Upgrades'] = function(){
+    create.team.Spread();
+    config.displayOrder = ['pawn','rook','bishop','unicorn','knight','king','queen','ghost','empress','star','snowman'];
+}
+create.team.Consolidated = function(){
+    // 0,2,3-4,0-4
+    config.size = [3,3,5,5];
+    board[[1,1,3,0]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,3,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,3,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,3,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,3,4]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,4,0]] = {'piece':'rook','team':'b'};
+    board[[1,1,4,1]] = {'piece':'knight','team':'b'};
+    board[[1,1,4,2]] = {'piece':'queen','team':'b'};
+    board[[1,1,4,3]] = {'piece':'king','team':'b'};
+    board[[1,1,4,4]] = {'piece':'bishop','team':'b'};
+    //2,0,0-1,0-4
+    board[[1,1,1,0]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,1,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,1,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,1,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,1,4]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,0,0]] = {'piece':'rook','team':'w'};
+    board[[1,1,0,1]] = {'piece':'knight','team':'w'};
+    board[[1,1,0,2]] = {'piece':'queen','team':'w'};
+    board[[1,1,0,3]] = {'piece':'king','team':'w'};
+    board[[1,1,0,4]] = {'piece':'bishop','team':'w'};
+}
+create.team.Long = function(){
+    config.size = [3,2,8,6];
+    config.displayOrder = ['pawn','rook','bishop','knight','snowman','king','queen','ghost','empress'];
+    config.orientation = [0,1,2,3];
+    // 1,0 white
+    board[[1,0,1,0]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,0,1,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,0,1,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,0,1,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,0,1,4]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,0,1,5]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,0,0,0]] = {'piece':'rook','team':'w'};
+    board[[1,0,0,1]] = {'piece':'bishop','team':'w'};
+    board[[1,0,0,2]] = {'piece':'king','team':'w'};
+    board[[1,0,0,3]] = {'piece':'queen','team':'w'};
+    board[[1,0,0,4]] = {'piece':'bishop','team':'w'};
+    board[[1,0,0,5]] = {'piece':'rook','team':'w'};
+    // 1,0 black
+    board[[1,0,7,0]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,0,7,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,0,7,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,0,7,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,0,7,4]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,0,7,5]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    // 1,1 white
+    board[[1,1,0,0]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,0,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,0,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,0,4]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,0,5]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    // 1,1 black
+    board[[1,1,6,0]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,6,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,6,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,6,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,6,4]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,6,5]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,7,0]] = {'piece':'rook','team':'b'};
+    board[[1,1,7,1]] = {'piece':'bishop','team':'b'};
+    board[[1,1,7,2]] = {'piece':'king','team':'b'};
+    board[[1,1,7,3]] = {'piece':'queen','team':'b'};
+    board[[1,1,7,4]] = {'piece':'bishop','team':'b'};
+    board[[1,1,7,5]] = {'piece':'rook','team':'b'};
+    // 0,0
+    board[[0,0,1,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,0,1,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,0,1,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,0,1,4]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,0,0,1]] = {'piece':'snowman','team':'w'};
+    board[[0,0,0,2]] = {'piece':'knight','team':'w'};
+    board[[0,0,0,3]] = {'piece':'ghost','team':'w'};
+    board[[0,0,0,4]] = {'piece':'snowman','team':'w'};
+    board[[0,0,7,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,0,7,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,0,7,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,0,7,4]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    // 2,0
+    board[[2,0,1,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,0,1,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,0,1,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,0,1,4]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,0,0,1]] = {'piece':'snowman','team':'w'};
+    board[[2,0,0,2]] = {'piece':'knight','team':'w'};
+    board[[2,0,0,3]] = {'piece':'ghost','team':'w'};
+    board[[2,0,0,4]] = {'piece':'snowman','team':'w'};
+    board[[2,0,7,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,0,7,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,0,7,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,0,7,4]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    // 0,1
+    board[[0,1,0,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,1,0,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,1,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,1,0,4]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,1,7,1]] = {'piece':'snowman','team':'b'};
+    board[[0,1,7,2]] = {'piece':'knight','team':'b'};
+    board[[0,1,7,3]] = {'piece':'ghost','team':'b'};
+    board[[0,1,7,4]] = {'piece':'snowman','team':'b'};
+    board[[0,1,6,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,1,6,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,1,6,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,1,6,4]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    // 2,1
+    board[[2,1,0,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,1,0,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,1,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,1,0,4]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,1,7,1]] = {'piece':'snowman','team':'b'};
+    board[[2,1,7,2]] = {'piece':'knight','team':'b'};
+    board[[2,1,7,3]] = {'piece':'ghost','team':'b'};
+    board[[2,1,7,4]] = {'piece':'snowman','team':'b'};
+    board[[2,1,6,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,1,6,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,1,6,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,1,6,4]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+}
+create.team.Big = function(){
+    config.size = [5,3,6,6];
+    config.displayOrder = ['pawn','rook','bishop','unicorn','knight','snowman','king','queen','ghost','empress','turncoat'];
+    config.orientation = [0,1,2,3];
+    // 2,1
+    board[[2,1,0,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,1,0,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,1,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,1,0,4]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,1,5,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,1,5,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,1,5,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,1,5,4]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,1,2,2]] = {'piece':'turncoat','team':'o'};
+    board[[2,1,2,3]] = {'piece':'turncoat','team':'o'};
+    board[[2,1,3,2]] = {'piece':'turncoat','team':'o'};
+    board[[2,1,3,3]] = {'piece':'turncoat','team':'o'};
+    // 2,0
+    board[[2,0,1,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,0,1,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,0,1,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,0,1,4]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[2,0,0,0]] = {'piece':'bishop','team':'w'};
+    board[[2,0,0,1]] = {'piece':'unicorn','team':'w'};
+    board[[2,0,0,2]] = {'piece':'king','team':'w'};
+    board[[2,0,0,3]] = {'piece':'queen','team':'w'};
+    board[[2,0,0,4]] = {'piece':'unicorn','team':'w'};
+    board[[2,0,0,5]] = {'piece':'bishop','team':'w'};
+    // 2,2
+    board[[2,2,4,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,2,4,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,2,4,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,2,4,4]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[2,2,5,0]] = {'piece':'bishop','team':'b'};
+    board[[2,2,5,1]] = {'piece':'unicorn','team':'b'};
+    board[[2,2,5,2]] = {'piece':'king','team':'b'};
+    board[[2,2,5,3]] = {'piece':'queen','team':'b'};
+    board[[2,2,5,4]] = {'piece':'unicorn','team':'b'};
+    board[[2,2,5,5]] = {'piece':'bishop','team':'b'};
+    // bottom edges
+    board[[0,2,5,0]] = {'piece':'rook','team':'b'};
+    board[[0,2,5,1]] = {'piece':'ghost','team':'b'};
+    board[[0,2,4,0]] = {'piece':'knight','team':'b'};
+    board[[4,2,5,5]] = {'piece':'rook','team':'b'};
+    board[[4,2,5,4]] = {'piece':'ghost','team':'b'};
+    board[[4,2,4,5]] = {'piece':'knight','team':'b'};
+    // top edges
+    board[[0,0,0,0]] = {'piece':'rook','team':'w'};
+    board[[0,0,0,1]] = {'piece':'ghost','team':'w'};
+    board[[0,0,1,0]] = {'piece':'knight','team':'w'};
+    board[[4,0,0,5]] = {'piece':'rook','team':'w'};
+    board[[4,0,0,4]] = {'piece':'ghost','team':'w'};
+    board[[4,0,1,5]] = {'piece':'knight','team':'w'};
+    // extra pawns
+    board[[1,1,5,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,5,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[1,1,0,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[1,1,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[3,1,5,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[3,1,5,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[3,1,0,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[3,1,0,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+}
+create.team.Regularish = function(){
+    config.size = [1,1,8,8];
+    config.displayOrder = ['pawn','knight','bishop','rook','queen','king'];
+    config.orientation = [0,1,2,3];
+    // black, back row
+    board[[0,0,7,0]] = {'piece':'rook','team':'b'};
+    board[[0,0,7,1]] = {'piece':'knight','team':'b'};
+    board[[0,0,7,2]] = {'piece':'bishop','team':'b'};
+    board[[0,0,7,3]] = {'piece':'queen','team':'b'};
+    board[[0,0,7,4]] = {'piece':'king','team':'b'};
+    board[[0,0,7,5]] = {'piece':'bishop','team':'b'};
+    board[[0,0,7,6]] = {'piece':'knight','team':'b'};
+    board[[0,0,7,7]] = {'piece':'rook','team':'b'};
+    // black, pawns
+    board[[0,0,6,0]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,0,6,1]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,0,6,2]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,0,6,3]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,0,6,4]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,0,6,5]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,0,6,6]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    board[[0,0,6,7]] = {'piece':'pawn','team':'b','dim':2,'direction':-1};
+    // white, back row
+    board[[0,0,0,0]] = {'piece':'rook','team':'w'};
+    board[[0,0,0,1]] = {'piece':'knight','team':'w'};
+    board[[0,0,0,2]] = {'piece':'bishop','team':'w'};
+    board[[0,0,0,3]] = {'piece':'queen','team':'w'};
+    board[[0,0,0,4]] = {'piece':'king','team':'w'};
+    board[[0,0,0,5]] = {'piece':'bishop','team':'w'};
+    board[[0,0,0,6]] = {'piece':'knight','team':'w'};
+    board[[0,0,0,7]] = {'piece':'rook','team':'w'};
+    // white, pawns
+    board[[0,0,1,0]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,0,1,1]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,0,1,2]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,0,1,3]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,0,1,4]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,0,1,5]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,0,1,6]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+    board[[0,0,1,7]] = {'piece':'pawn','team':'w','dim':2,'direction':1};
+}
+create.team.Test = function(){
+    config.size = [3,3,5,5];
+    config.displayOrder = ['pawn','rook','bishop','unicorn','knight','king','queen','ghost','empress','star','turncoat','snowman','god'];
+    board[[1,2,3,4]] = {'piece':'empress','team':'w'};
+}
+create.Random = function(){
+    function fill(team){
+        var pCounter = 0;
+        while (pCounter < config.numOfPieces){
+            var coords = [randBetween(0,config.size[0]-1),randBetween(0,config.size[1]-1),randBetween(0,config.size[2]-1),randBetween(0,config.size[3]-1)];
+            if (typeof(board[coords]) == 'undefined'){
+                var pieceType = create.RandomPiece();
+                board[coords] = {'piece':pieceType,'team':team};
+                if (pCounter == config.numOfPieces-1){
+                    board[coords] = {'piece':'king','team':team};
+                }
+                if (pieceType == 'pawn'){
+                    board[coords].dim = 2;
+                    if (team == 'w'){
+                        board[coords].direction = 1;
+                    } else {
+                        board[coords].direction = -1;
+                    }
+                } else if (pieceType == 'turncoat'){
+                    board[coords].team = 'o';
+                }
+                pCounter++;
+            }
+        }
+    }
+    fill('w');
+    fill('b');
+}
+create.RandomPiece = function(){
+    var totalWeight = 0;
+    var i;
+    var lookup = [''];
+    for (i in config.random){
+        totalWeight += config.random[i];
+        var counter = 1;
+        while (counter <= config.random[i]){
+            lookup.push(i);
+            counter++;
+        }
+    }
+    var currentPiece = randBetween(1,totalWeight);
+    return lookup[currentPiece];
+}
+create.team['Random'] = function(){
+    config.displayOrder = ['pawn','rook','bishop','unicorn','knight','snowman','king','queen','ghost','star','telephone','empress','turncoat'];
+    config.size = [3,3,5,5];
+    config.numOfPieces = 24;
+    config.random = {
+        'pawn':60,
+        'rook':3,
+        'bishop':3,
+        'unicorn':2,
+        'knight':3,
+        'snowman':3,
+        'queen':2,
+        'ghost':3,
+        'star':1,
+        'telephone':1,
+        'empress':1,
+        'turncoat':2
+    }
+    create.Random();
+}
+create.team['Spread - Elderly King'] = function(){
+    create.team['Spread - Extra Pieces']();
+    config.displayOrder = ['pawn','rook','bishop','unicorn','knight','elderly king','queen','ghost','turncoat','star','snowman','empress'];
+    board[[1,0,0,2]].piece = 'elderly king';
+    board[[1,2,4,2]].piece = 'elderly king';
+}
+	</script>
+<script>
+	var p = {
+    'rook':{
+        'moves':function(start,o){
+            var result = [];
+            function listPos(positive){
+                var i;
+                for (i = 0; i < 4; i++){
+                    var end = [...start];
+                    while (true){
+                        if (positive){end[i]++}else{end[i]--};
+                        if (end[i] >= config.size[i] || end[i] < 0){break};
+                        if (typeof(board[end]) == 'undefined'){
+                            result.push([...end]);
+                        } else if (board[end].team == o.team){
+                            break;
+                        } else {
+                            result.push([...end]);
+                            break;
+                        }
+                    }
+                }
+            }
+            listPos(true);
+            listPos(false);
+            return result;
+        },'w':9814,
+        'b':9820,
+        'def':'Moves any number of spaces in 1 dimension.'
+    },'pawn':{
+        'moves':function(start,o){
+            var result = [];
+            var move1 = [...start];
+            move1[o.dim] += o.direction;
+            if (typeof(board[move1]) == 'undefined' && move1[o.dim] >= 0 && move1[o.dim] < config.size[o.dim]){result.push([...move1])};
+            function listPos(dim,pos){
+                var end = [...start];
+                end[o.dim] += o.direction;
+                end[dim] += pos;
+                if (o.dim == dim){return};
+                if (end[o.dim] >= config.size[o.dim] || end[o.dim] < 0){return};
+                if (end[dim] >= config.size[dim] || end[dim] < 0){return};
+                if (typeof(board[end]) == 'undefined'){return};
+                if (board[end].team == o.team){return};
+                result.push([...end]);
+            }
+            var combos = [[0,1],[0,-1],[1,1],[1,-1],[2,1],[2,-1],[3,1],[3,-1]];
+            var i;
+            for (i of combos){listPos(...i)};
+            return result;
+        },'w':9817,
+        'b':9823,
+        'def':'2 Movement Types: 1. Forward one space in starting dimension, cannot capture.  2. Foward one space in starting dimension and one space in any direction in an additional dimension, must capture.'
+    },'queen':{
+        'moves':function(start,o){
+            return p.rook.moves(start,o).concat(p.bishop.moves(start,o));
+        },'w':9813,
+        'b':9819,
+        'def':'Moves any equal number of spaces in one or two dimensions.'
+    },'king':{
+        'moves':function(start,o){
+            var result = [];
+            function listPos(dim1,dim2,pos1,pos2){
+                var end = [...start];
+                end[dim1] += pos1;
+                end[dim2] += pos2;
+                if (end[dim1] >= config.size[dim1] || end[dim1] < 0){return};
+                if (end[dim2] >= config.size[dim2] || end[dim2] < 0){return};
+                if (typeof(board[end]) == 'undefined'){
+                    result.push([...end])
+                } else if (board[end].team != o.team){
+                    result.push([...end])
+                }
+            }
+            var posCombos = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+            var i;
+            for (i of config.dimCombos){
+                var j;
+                for (j of posCombos){
+                    listPos(...i.concat(j));
+                }
+            }
+            return result;
+        },'w':9812,
+        'b':9818,
+        'def':'Moves one space in one or two dimensions.'
+    },'bishop':{
+        'moves':function(start,o){
+            var result = [];
+            function listPos(dim,dim2,pos,pos2){
+                var end = [...start];
+                while (true){
+                    end[dim]+=pos;
+                    end[dim2]+=pos2;
+                    if (end[dim] >= config.size[dim] || end[dim] < 0){break};
+                    if (end[dim2] >= config.size[dim2] || end[dim2] < 0){break};
+                    if (typeof(board[end]) == 'undefined'){
+                        result.push([...end]);
+                    } else if (board[end].team == o.team){
+                        break;
+                    } else {
+                        result.push([...end]);
+                        break;
+                    }
+                }
+            }
+            var i;
+            var combos = [[0,1,1,1],[0,2,1,1],[0,3,1,1],[1,2,1,1],[1,3,1,1],[2,3,1,1],[0,1,1,-1],[0,2,1,-1],[0,3,1,-1],[1,2,1,-1],[1,3,1,-1],[2,3,1,-1],[0,1,-1,1],[0,2,-1,1],[0,3,-1,1],[1,2,-1,1],[1,3,-1,1],[2,3,-1,1],[0,1,-1,-1],[0,2,-1,-1],[0,3,-1,-1],[1,2,-1,-1],[1,3,-1,-1],[2,3,-1,-1]];
+            for (i of combos){listPos(...i)};
+            return result;
+        },'w':9815,
+        'b':9821,
+        'def':'Moves any equal number of spaces in two dimensions.'
+    },'knight':{
+        'moves':function(start,o){
+            var result = [];
+            function listPos(dim1,dim2,pos1,pos2){
+                var end = [...start];
+                end[dim1]+=pos1;
+                end[dim2]+=pos2;
+                if (end[dim1] >= config.size[dim1] || end[dim1] < 0){return};
+                if (end[dim2] >= config.size[dim2] || end[dim2] < 0){return};
+                if (typeof(board[end]) == 'undefined'){
+                    result.push([...end])
+                } else if (board[end].team != o.team){
+                    result.push([...end])
+                }
+            }
+            var posCombos = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]
+            var i;
+            for (i of config.dimCombos){
+                var j;
+                for (j of posCombos){
+                    listPos(...i.concat(j));
+                }
+            }
+            return result;
+        },'w':9816,
+        'b':9822,
+        'def':'Moves 2 spaces in one dimension and 1 space in another dimension.  Does not collide with other pieces.'
+    },'ghost':{
+        'moves':function(start,o){
+            var result = [];
+            function listPos(a,b,c,d){
+                var end = [...start];
+                end[0] += a;
+                end[1] += b;
+                end[2] += c;
+                end[3] += d;
+                if (end[0] >= config.size[0] || end[0] < 0){return};
+                if (end[1] >= config.size[1] || end[1] < 0){return};
+                if (end[2] >= config.size[2] || end[2] < 0){return};
+                if (end[3] >= config.size[3] || end[3] < 0){return};
+                if (typeof(board[end]) == 'undefined'){
+                    result.push([...end]);
+                } else if (board[end].team != o.team){
+                    var dimsUsed = 0;
+                    if (a != 0){dimsUsed++};
+                    if (b != 0){dimsUsed++};
+                    if (c != 0){dimsUsed++};
+                    if (d != 0){dimsUsed++};
+                    if (dimsUsed == 1){
+                        result.push([...end]);
+                    }
+                }
+            }
+            var a;
+            for (a=-1;a<2;a++){
+                var b;
+                for (b=-1;b<2;b++){
+                    var c;
+                    for (c=-1;c<2;c++){
+                        var d;
+                        for (d=-1;d<2;d++){
+                            listPos(a,b,c,d);
+                        }
+                    }
+                }
+            }
+            return result;
+        },'w':9863,
+        'b':9865,
+        'def':'2 Movement Types: 1. Moves 1 space in any number of dimensions, cannot capture. 2. Moves 1 space in one dimension, can capture.'
+    },'unicorn':{
+        'moves':function(start,o){
+            var result = [];
+            var posCombos = [[-1,-1,-1,0],[-1,-1,1,0],[-1,1,-1,0],[-1,1,1,0],[1,-1,-1,0],[1,-1,1,0],[1,1,-1,0],[1,1,1,0],[-1,-1,0,-1],[-1,-1,0,1],[-1,1,0,-1],[-1,1,0,1],[1,-1,0,-1],[1,-1,0,1],[1,1,0,-1],[1,1,0,1],[-1,0,-1,-1],[-1,0,-1,1],[-1,0,1,-1],[-1,0,1,1],[1,0,-1,-1],[1,0,-1,1],[1,0,1,-1],[1,0,1,1],[0,-1,-1,-1],[0,-1,-1,1],[0,-1,1,-1],[0,-1,1,1],[0,1,-1,-1],[0,1,-1,1],[0,1,1,-1],[0,1,1,1]];
+            function listPos(a,b,c,d){
+                var end = [...start];
+                while(true){
+                    end[0] += a;
+                    end[1] += b;
+                    end[2] += c;
+                    end[3] += d;
+                    if (end[0] >= config.size[0] || end[0] < 0){break};
+                    if (end[1] >= config.size[1] || end[1] < 0){break};
+                    if (end[2] >= config.size[2] || end[2] < 0){break};
+                    if (end[3] >= config.size[3] || end[3] < 0){break};
+                    if (typeof(board[end]) == 'undefined'){
+                        result.push([...end]);
+                    } else if (board[end].team == o.team){
+                        break;
+                    } else {
+                        result.push([...end]);
+                        break;
+                    }
+                }
+            }
+            var i;
+            for (i of posCombos){
+                listPos(...i);
+            }
+            return result;
+        },'w':10001,
+        'b':10002,
+        'def':'Moves any equal number of spaces in three dimensions.'
+    },'empress':{
+        'moves':function(start,o){
+            return p.queen.moves(start,o).concat(p.unicorn.moves(start,o));
+        },'w':9678,
+        'b':9673,
+        'def':'Moves any equal number of spaces in one, two or three dimensions.'
+    },'god':{
+        'moves':function(start,o){
+            var a;
+            var result = [];
+            for (a = 0; a <= config.size[0]-1; a++){
+                var b;
+                for (b = 0; b <= config.size[1]-1; b++){
+                    var c;
+                    for (c = 0; c <= config.size[2]-1; c++){
+                        var d;
+                        for (d = 0; d <= config.size[3]-1; d++){
+                            result.push([a,b,c,d]);
+                        }
+                    }
+                }
+            }
+            return result;
+        },'w':9898,
+        'b':9899,
+        'def':'Moves to any space on the board.'
+    },'telephone':{
+        'moves':function(start,o){
+            return [];
+        },'w':9743,
+        'b':9742,
+        'def':'Cannot move.'
+    },'snowman':{
+        'moves':function(start,o){
+            return p.king.moves(start,o);
+        },'w':9731,
+        'b':9927,
+        'def':'Moves like a king.'
+    },'star':{
+        'moves':function(start,o){
+            return p.capture1dim.moves(start,o).concat([...p.star.moveSet]);
+        },'w':9734,
+        'b':9733,
+        'def':'Teleports to one of '+config.star.spaces+' random vacant spaces.  Can also capture by moving 1 space in one dimension.'
+    },'turncoat':{
+        'moves':function(start,o){
+            var tempO = JSON.parse(JSON.stringify(o));
+            tempO.team = 'w'
+            var w = p[config.turncoat].moves(start,tempO);
+            tempO.team = 'b';
+            return w.concat(p[config.turncoat].moves(start,tempO));
+        },'w':9765,
+        'b':9765,
+        'o':9765,
+        'def':'Can be moved by either team.  Moves like a '+config.turncoat+'.'
+    },'shield':{
+        'moves':function(start,o){
+    
+        },'w':9929,
+        'b':9930,
+        'def':''
+    },'capture1dim':{
+        'moves':function(start,o){
+            var result = [];
+            function listPos(dim1,pos1){
+                var end = [...start];
+                end[dim1] += pos1;
+                if (end[dim1] >= config.size[dim1] || end[dim1] < 0){return};
+                if (typeof(board[end]) == 'undefined'){
+                    return;
+                } else if (board[end].team != o.team){
+                    result.push([...end]);
+                }
+            }
+            var i = 0;
+            while(i<=3){
+                listPos(i,1);
+                listPos(i,-1);
+                i++;
+            }
+            return result;
+        },'w':5,
+        'b':4,
+        'def':'Moves 1 space in 1 dimension, but only to capture.'
+    },'slowboi':{
+        'moves':function(start,o){
+            var result = [];
+            function listPos(dim1,pos1){
+                var end = [...start];
+                end[dim1] += pos1;
+                if (end[dim1] >= config.size[dim1] || end[dim1] < 0){return};
+                if (typeof(board[end]) == 'undefined'){
+                    result.push([...end]);
+                } else if (board[end].team != o.team){
+                    result.push([...end]);
+                }
+            }
+            var i = 0;
+            while(i<=3){
+                listPos(i,1);
+                listPos(i,-1);
+                i++;
+            }
+            return result;
+        },'w':5,
+        'b':4,
+        'def':'Moves 1 space in one dimension.'
+    },'elderly king':{
+        'moves':function(start,o){
+            return p.slowboi.moves(start,o);
+        },'w':9812,
+        'b':9818,
+        'def':'Moves 1 space in one dimension.'
+    },'peaceful king':{
+        'moves':function(start,o){
+            var result = [];
+            function listPos(dim1,dim2,pos1,pos2){
+                var end = [...start];
+                end[dim1] += pos1;
+                end[dim2] += pos2;
+                if (end[dim1] >= config.size[dim1] || end[dim1] < 0){return};
+                if (end[dim2] >= config.size[dim2] || end[dim2] < 0){return};
+                if (typeof(board[end]) == 'undefined'){
+                    result.push([...end]);
+                }
+            }
+            var posCombos = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+            var i;
+            for (i of config.dimCombos){
+                var j;
+                for (j of posCombos){
+                    listPos(...i.concat(j));
+                }
+            }
+            return result;
+        },'w':9812,
+        'b':9818,
+        'def':'Moves one space in one or two dimensions, cannot capture.'
+    },'elderly peaceful king':{
+        'moves':function(start,o){
+            var result = [];
+            function listPos(dim1,pos1){
+                var end = [...start];
+                end[dim1] += pos1;
+                if (end[dim1] >= config.size[dim1] || end[dim1] < 0){return};
+                if (typeof(board[end]) == 'undefined'){
+                    result.push([...end]);
+                }
+            }
+            var i = 0;
+            while(i<=3){
+                listPos(i,1);
+                listPos(i,-1);
+                i++;
+            }
+            return result;
+        },'w':9812,
+        'b':9818,
+        'def':'Moves 1 space in 1 dimension, cannot capture.'
+    }
+	}
+	</script>
+<style>
+table {
+    border: 1px solid black;
+    margin: 5px;
+    text-align: center;
+    color: blue;
+}
+td {
+    border: 1px dotted black;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    font-size: 1.3em;
+    padding: 0px 0px 0px 0px;
+}
+tr{
+    color:black;
+}
+/*Dim3*/
+.dim3{
+    text-align: center;
+    font-weight: bold;
+    color: red;
+}
+caption{
+    text-align: center;
+}
+/*Dim0*/
+th{
+    font-weight: normal;
+    color: green;
+}
+p{
+    padding: 0px;
+    margin: 0px;
+    font-size: .75em;
+}
+.normDiv{
+    display: flex;
+    flex-direction: column;
+    font-weight: normal;
+    color: black;
+    justify-content: flex-start;
+    width: 20%;
+    text-align: left;
+}
+.defDiv{
+    display: flex;
+    flex-direction: row;
+}
+hr{
+    margin-top: 5px;
+    margin-bottom: 2px;
+}
+.tableDiv{
+    display: flex;
+    flex-direction: row;
+    color: blue;
+    vertical-align: middle;
+}
+.tableLabel{
+    vertical-align: middle;
+    color: blue;
+    font-weight: normal;
+}
+.grave{
+    font-size: 1.5em;
+}
+button{
+    padding-left: 1px;
+    padding-right: 1px;
+}
+</style>
+</head>
+<body onload='onload()' style='display: flex; flex-direction: row;'>
+    <div class='normDiv'>
+        <select id='config' oninput='display.reload()'></select>
+        <div class='defDiv' style='justify-content: space-between;'>
+            <p id='orient'>a,b,c,d</p>
+            <button id='threatButton' onclick='display.toggleAllThreats()' style='font-size: .5em;'>Show White Moves</button>
+            <p>Spaces: <span id='spaces'></span></p>
+        </div>
+        <div class='defDiv' style='padding-bottom: 6px;'><input type="file" id='cFile' style='width: 70%; font-size: .5em;'><a id="download" style='font-size: .75em;'>Download</a></div>
+        <div class='defDiv' style='justify-content: space-between;'>
+            <p id='turn' style='text-align: center;' onclick='display.teamSwitch()'>White's Turn</p>
+            <div>
+                <button id='nextMovesButton' onclick='display.toggleNextMove()' style='font-size: .5em;'>Show Next Moves</button>
+                <button onclick='display.flip()' style='font-size: .5em;'>Flip</button>
+                <button id='rotate' onclick='display.rotate()' style='font-size: .5em;'>Rotate (0)</button>
+                <button onclick='display.reset()' style='font-size: .5em;'>Reset</button>
+            </div>
+        </div>
+        <h3 style='color: red; display: none;' id='pawnSwap'>Click a piece below to swap for your pawn...</h3>
+        <div id='info' class='normDiv' style='width: 100%;'></div>
+    </div>
+    <div id='gameArea' style='display: flex; flex-direction: row; width: 80%; justify-content: space-around;'></div>
+    <div id='graveyard' style='display: block;'></div>
+<script>
+
+var board = {};
+function onload(){
+    display.configs();
+    document.getElementById('config').value = config.default;
+    display.reload();
+}
+create.htmlBoard = function(){
+    var a;
+    for (a of board){
+        var table = document.createElement('table');
+        var b;
+        for (b of board){
+            var row = document.createElement('tr');
+        }
+    }
+}
+var display = {
+'html':function(){
+    document.getElementById('gameArea').innerHTML = '';
+    var key = config.orientation;
+    var a;
+    var letters = ['a','b','c','d'];
+    document.getElementById('orient').innerHTML = letters[key[0]]+','+letters[key[1]]+','+letters[key[2]]+','+letters[key[3]];
+    document.getElementById('rotate').innerHTML = 'Rotate ('+this.currentOrientation+')';
+    for (a=0;a<config.size[key[0]];a++){
+        var div = document.createElement('div');
+        div.id = 'dim3' + a;
+        div.innerHTML = a + letters[key[0]];
+        div.setAttribute('class','dim3');
+        var b;
+        for (b=0;b<config.size[key[1]];b++){
+            var tableDiv = document.createElement('div');
+            tableDiv.setAttribute('class','tableDiv');
+            var table = document.createElement('table');
+            table.id = 'dim2'+b;
+            var tablelabel = document.createElement('div');
+            tablelabel.innerHTML = b + letters[key[1]];
+            tablelabel.setAttribute('class','tableLabel');
+            tableDiv.appendChild(tablelabel);
+            tableDiv.appendChild(table);
+            var e;
+            var labelRow = document.createElement('tr');
+            var blankSpace = document.createElement('th');
+            labelRow.appendChild(blankSpace);
+            for (e=0;e<config.size[key[3]];e++){
+                var columnlabel = document.createElement('th');
+                columnlabel.innerHTML = e + letters[key[3]];
+                labelRow.appendChild(columnlabel);
+            }
+            table.appendChild(labelRow);
+            var c;
+            for (c=0;c<config.size[key[2]];c++){
+                var row = document.createElement('tr');
+                row.id = 'dim1'+c;
+                row.innerHTML = c + letters[key[2]];
+                var d;
+                for (d=0;d<config.size[key[3]];d++){
+                    var td = document.createElement('td');
+                    var sid = [];
+                    sid[key[0]] = a;
+                    sid[key[1]] = b;
+                    sid[key[2]] = c;
+                    sid[key[3]] = d;
+                    td.id = sid;
+                    if (isEven(a+b+c+d)){td.setAttribute('style','background-color: '+config.highlight.alt)};
+                    td.setAttribute('onclick','display.click(['+td.id+'])');
+                    if (typeof(board[sid]) != 'undefined'){
+                        var piece = board[sid];
+                        td.innerHTML = String.fromCharCode(p[piece.piece][piece.team]);
+                    }
+                    row.appendChild(td);
+                }
+                table.appendChild(row);
+            }
+            div.appendChild(tableDiv);
+        }
+        document.getElementById('gameArea').appendChild(div);
+    }
+},'highlight':function(coords,color){
+    document.getElementById(coords).style = 'background-color: '+color+";";
+},'unhighlight':function(coords){
+    if (isEven(coords[0]+coords[1]+coords[2]+coords[3])){
+        document.getElementById(coords).style = 'background-color: '+config.highlight.alt;
+    } else {
+        document.getElementById(coords).style = 'background-color: white;';
+    }
+},'click':function(coords){
+    // no piece selected
+        // select piece - show moves
+        // select empty space - show threats
+    // piece selected
+        // select valid move - move piece & unhighlight
+        // select other space - unhighlight
+    this.newCoords = coords;
+    if (this.pieceSelected){
+        // piece selected
+        var i;
+        var validMove = false;
+        for (i of this.moves){
+            if (JSON.stringify(i) == JSON.stringify(coords)){validMove = true};
+            this.unhighlight(i);
+            if (config.showNextMoves){this.clearNextMoves()};
+        }
+        if (validMove){
+            // valid move clicked - move piece
+            if (typeof(board[coords]) != 'undefined'){this.addToGraveyard(coords)};
+            board[coords] = this.piece;
+            document.getElementById(this.origCoords).innerHTML = '';
+            document.getElementById(coords).innerHTML = String.fromCharCode(p[this.piece.piece][this.piece.team]);
+            delete board[this.origCoords];
+            this.specialConditions(coords);
+            this.pieceSelected = false;
+            this.teamSwitch();
+            downloadC();
+        } else {
+            // other space clicked
+            this.pieceSelected = false;
+        }
+    } else {
+        // no piece selected
+        if (typeof(board[coords]) != 'undefined'){
+            // select piece - show moves
+            this.showMoves(coords);
+        } else {
+            // select empty space - show threats
+            if (this.threatsDisplayed){
+                this.clearThreats();
+            } else {
+                display.threats(coords);
+            }
+        }
+    }
+},'pieceSelected':false,
+'definitions':function(){
+    document.getElementById('info').innerHTML = '';
+    var i;
+    for (i of config.displayOrder){
+        var row = document.createElement('p');
+        row.innerHTML = String.fromCharCode(p[i].w) + String.fromCharCode(p[i].b) + ' - '+ i + ' - ' + p[i].def;
+        row.setAttribute('onclick','display.pawnSwitch("'+i+'")');
+        document.getElementById('info').appendChild(row);
+        var split = document.createElement('hr');
+        document.getElementById('info').appendChild(split);
+    }
+},'reload':function(){
+    var selectedConfig = document.getElementById('config').value;
+    board = {};
+    create.team[selectedConfig]();
+    display.html();
+    document.getElementById('spaces').innerHTML = display.spaces();
+    p.turncoat.def = 'Can be moved by either team. ' + p[config.turncoat].def;
+    display.definitions();
+    display.star();
+},'configs':function(){
+    var i;
+    for (i in create.team){
+        var option = document.createElement('option');
+        option.innerHTML = i;
+        document.getElementById('config').appendChild(option);
+    }
+},'specialConditions':function(coords){
+    if (this.piece.piece == 'pawn'){
+        if (this.piece.direction == 1){
+            if (coords[this.piece.dim] == config.size[this.piece.dim]-1){
+                this.pawnEnd = true;
+                document.getElementById('pawnSwap').style = 'color: red; display: block;'
+            }
+        } else {
+            if (coords[this.piece.dim] == 0){
+                this.pawnEnd = true;
+                document.getElementById('pawnSwap').style = 'color: red; display: block;'
+            }
+        }
+    }
+    // star
+    this.star();
+},'pawnSwitch':function(pieceName){
+    if (this.pawnEnd){
+        board[this.newCoords] = {'piece':pieceName,'team':this.piece.team};
+        document.getElementById(this.newCoords).innerHTML = String.fromCharCode(p[pieceName][this.piece.team]);
+    }
+    this.pawnEnd = false;
+    document.getElementById('pawnSwap').style = 'color: red; display: none;'
+},'star':function(){
+    p.star.moveSet = [];
+    while (p.star.moveSet.length < config.star.spaces){
+        var newMove = [
+            randBetween(0,config.size[0]-1),
+            randBetween(0,config.size[1]-1),
+            randBetween(0,config.size[2]-1),
+            randBetween(0,config.size[3]-1)
+        ];
+        if (typeof(board[newMove]) == 'undefined'){
+            p.star.moveSet.push([...newMove]);
+        }
+    }
+},'threats':function(coords){
+    this.clearThreats();
+    var i;
+    this.threatening = [];
+    board[coords] = {'piece':'telephone','team':'o'};
+    for (i in board){
+        var pc = board[i];
+        var testCoords = JSON.parse('['+i+']')
+        var moveset = p[pc.piece].moves(testCoords,pc);
+        var j;
+        for (j of moveset){
+            if (JSON.stringify(coords) == JSON.stringify(j)){
+                this.threatening.push([...testCoords]);
+            }
+        }
+    }
+    this.threatening.push([...coords]);
+    var k;
+    for (k of this.threatening){
+        this.highlight(k,config.highlight.threat);
+    }
+    this.threatsDisplayed = true;
+    delete board[coords];
+},'threatening':[],
+'clearThreats':function(){
+    var l;
+    for (l of this.threatening){this.unhighlight(l)};
+    this.threatsDisplayed = false;
+},'teamSwitch':function(){
+    var el = document.getElementById('turn');
+    if (this.teamturn == 'w'){
+        el.innerHTML = "Black's Turn";
+        el.style = 'color: white; background-color: black; text-align: center;';
+        this.teamturn = 'b';
+    } else {
+        el.innerHTML = "White's Turn";
+        el.style = 'color: black; background-color: white; text-align: center;';
+        this.teamturn = 'w';
+    }
+},'teamturn':'w',
+'allThreats':function(team){
+    var i;
+    this.listAllThreats = {};
+    for (i in board){
+        var pc = board[i];
+        if (pc.team != team){continue};
+        var testCoords = JSON.parse('['+i+']')
+        var moveset = p[pc.piece].moves(testCoords,pc);
+        var j;
+        for (j of moveset){
+            this.listAllThreats[j] = j;
+        }
+    }
+    var k;
+    for (k in this.listAllThreats){
+        this.highlight(k,config.highlight[team]);
+    }
+    this.allThreatsShown = team;
+},'clearAllThreats':function(){
+    var i;
+    for (i in this.listAllThreats){
+        this.unhighlight(this.listAllThreats[i]);
+    }
+    this.allThreatsShown = false;
+},'toggleAllThreats':function(){
+    if (this.allThreatsShown == 'w'){
+        this.clearAllThreats();
+        this.allThreats('b');
+        document.getElementById('threatButton').innerHTML = 'Hide Moves'
+    } else if (this.allThreatsShown == 'b'){
+        this.clearAllThreats();
+        document.getElementById('threatButton').innerHTML = 'Show White Moves'
+    } else {
+        this.clearAllThreats();
+        this.allThreats('w');
+        document.getElementById('threatButton').innerHTML = 'Show Black Moves'
+    }
+},'graveyard':function(){
+    var el = document.getElementById('graveyard');
+    if (this.graveyardShown){
+        el.style = 'display: none;'
+        this.graveyardShown = false;
+        document.getElementById('graveyardToggle').innerHTML = 'Show Graveyard';
+    } else {
+        el.style = 'display: block;'
+        this.graveyardShown = true;
+        document.getElementById('graveyardToggle').innerHTML = 'Hide Graveyard';
+    }
+},'addToGraveyard':function(coords){
+    var pc = board[coords];
+    var el = document.createElement('p');
+    el.innerHTML = String.fromCharCode(p[pc.piece][pc.team]);
+    el.setAttribute('class','grave');
+    document.getElementById('graveyard').appendChild(el);
+},'graveyardShown':false,
+'flip':function(){
+    var old = JSON.parse(JSON.stringify(config.orientation));
+    config.orientation[0] = old[2];
+    config.orientation[1] = old[3];
+    config.orientation[2] = old[0];
+    config.orientation[3] = old[1];
+    this.html();
+},'rotate':function(){
+    var old = JSON.parse(JSON.stringify(config.orientation));
+    this.currentOrientation++;
+    if (this.currentOrientation >= this.orientations.length){this.currentOrientation = 0};
+    config.orientation = this.orientations[this.currentOrientation];
+    this.html();
+},'currentOrientation':0,
+'orientations':[[0,1,2,3],[0,1,3,2],[0,2,1,3],[0,2,3,1],[0,3,1,2],[0,3,2,1],[1,0,2,3],[1,0,3,2],[1,2,3,0],[1,3,2,0],[2,0,3,1],[2,1,3,0]],
+'reset':function(){
+    config.orientation = [0,1,2,3];
+    this.currentOrientation = 0;
+    this.html();
+},'spaces':function(){
+    return config.size[0]*config.size[1]*config.size[2]*config.size[3];
+},'nextMoves':function(){
+    var i;
+    this.nextMovesList = {};
+    for (i of this.moves){
+        var iMoveset = p[this.piece.piece].moves(i,this.piece);
+        var k;
+        for (k of iMoveset){
+            this.nextMovesList[k] = k;
+        }
+    }
+    var j;
+    for (j in this.nextMovesList){
+        this.highlight(this.nextMovesList[j],config.highlight.nextMoves);
+    }
+},'clearNextMoves':function(){
+    var i;
+    for (i in this.nextMovesList){
+        this.unhighlight(this.nextMovesList[i]);
+    }
+},'showMoves':function(coords){
+    this.clearThreats();
+    this.origCoords = [...coords];
+    this.piece = board[coords];
+    this.moves = p[this.piece.piece].moves(coords,this.piece);
+    if (config.showNextMoves){this.nextMoves()};
+    var i;
+    for (i of this.moves){this.highlight(i,config.highlight.moves)};
+    this.pieceSelected = true;
+},'toggleNextMove':function(){
+    if (config.showNextMoves){
+        config.showNextMoves = false;
+        document.getElementById('nextMovesButton').innerHTML = 'Show Next Moves';
+        this.clearNextMoves();
+    } else {
+        config.showNextMoves = true;
+        document.getElementById('nextMovesButton').innerHTML = 'Hide Next Moves';
+    }
+}
+};
+
+var example = {
+    'pawn':{'piece':'pawn','team':'b','dim':0,'direction':1},
+    'rook':{'piece':'rook','team':'b'},
+    'god':{'piece':'god','team':'b'},
+}
+function randBetween(l,h){
+    return Math.floor(Math.random()*(h+1-l)+l);
+}
+// store uploaded character in variable c
+const parsed = jsonText => JSON.parse(jsonText);
+const fr = new FileReader();
+function handleFileSelect (evt){
+    fr.readAsText(evt.target.files[0])
+}
+fr.onload = e => {
+    var objy
+    objy = parsed(e.target.result);
+    board = objy.board;
+    config = objy.config;
+    display.html();
+}
+document.getElementById('cFile').addEventListener('change', handleFileSelect, false);
+
+// download character
+function downloadC(){
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(board));
+    var dElement = document.getElementById('download');
+    dElement.setAttribute("href", dataStr);
+    dElement.setAttribute("download", "game.json");
+}
+function isEven(n) {
+    return n % 2 == 0;
+}
+</script>
+</body>
+</html>
