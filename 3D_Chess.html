@@ -43,7 +43,7 @@
                 width: 100vw;
                 position: absolute;
                 /* Background kind piece */
-                background: url("../img/kd.svg") no-repeat center;
+                background: url("img/kd.svg") no-repeat center;
                 background-size: auto 100%;
                 animation: spin 40s linear infinite;
                 z-index: -1;
@@ -110,7 +110,7 @@
             #board {
                 width: 100vw;
                 height: 100vh;
-                background: radial-gradient(circle, rgba(64,64,64,1) 48%, rgba(0,0,0,1) 100%);
+                background: linear-gradient(to bottom, #03055B, #050A1F); 
                 top: 0;
                 position: fixed;
             }
@@ -444,17 +444,17 @@
             #rad1 {
                 width: 2vw;
                 height: 2vw;
-                background: url("../img/kd.svg") no-repeat center;
+                background: url("img/kd.svg") no-repeat center;
                 background-size: 100%;
                 transition: all 0.15s ease-out;
             }
             #rad1:hover {
-                background: url("../img/kl.svg") no-repeat center;
+                background: url("img/kl.svg") no-repeat center;
                 background-size: 100%;
                 cursor: pointer;
             }
             [type=radio]:checked + #rad1 {
-                background: url("../img/kl.svg") no-repeat center;
+                background: url("img/kl.svg") no-repeat center;
                 background-size: 100%;
             }
             
@@ -462,17 +462,17 @@
             #rad2 {
                 width: 2vw;
                 height: 2vw;
-                background: url("../img/nd.svg") no-repeat center;
+                background: url("img/nd.svg") no-repeat center;
                 background-size: 100%;
                 transition: all 0.15s ease-out;
             }
             #rad2:hover {
-                background: url("../img/nl.svg") no-repeat center;
+                background: url("img/nl.svg") no-repeat center;
                 background-size: 100%;
                 cursor: pointer;
             }
             [type=radio]:checked + #rad2 {
-                background: url("../img/nl.svg") no-repeat center;
+                background: url("img/nl.svg") no-repeat center;
                 background-size: 100%;
             }
             
@@ -480,17 +480,17 @@
             #rad3 {
                 width: 2vw;
                 height: 2vw;
-                background: url("../img/rd.svg") no-repeat center;
+                background: url("img/rd.svg") no-repeat center;
                 background-size: 100%;
                 transition: all 0.15s ease-out;
             }
             #rad3:hover {
-                background: url("../img/rl.svg") no-repeat center;
+                background: url("img/rl.svg") no-repeat center;
                 background-size: 100%;
                 cursor: pointer;
             }
             [type=radio]:checked + #rad3 {
-                background: url("../img/rl.svg") no-repeat center;
+                background: url("img/rl.svg") no-repeat center;
                 background-size: 100%;
             }
             
@@ -498,17 +498,17 @@
             #rad4 {
                 width: 2vw;
                 height: 2vw;
-                background: url("../img/qd.svg") no-repeat center;
+                background: url("img/qd.svg") no-repeat center;
                 background-size: 100%;
                 transition: all 0.15s ease-out;
             }
             #rad4:hover {
-                background: url("../img/ql.svg") no-repeat center;
+                background: url("img/ql.svg") no-repeat center;
                 background-size: 100%;
                 cursor: pointer;
             }
             [type=radio]:checked + #rad4 {
-                background: url("../img/ql.svg") no-repeat center;
+                background: url("img/ql.svg") no-repeat center;
                 background-size: 100%;
             }
             
@@ -532,17 +532,17 @@
                 position: relative;
                 width: 5vw;
                 height: 5vw;
-                background: url("../img/pl.svg") no-repeat center, #292929;
+                background: url("img/pl.svg") no-repeat center, #292929;
                 transition: all 0.2s ease;
                 border-radius: 0.2em;
                 box-sizing: border-box;
             }
             #radWhite:hover {
-                background: url("../img/pl.svg") no-repeat center, #2d2d2d;
+                background: url("img/pl.svg") no-repeat center, #2d2d2d;
                 cursor: pointer;
             }
             [type=radio]:checked + #radWhite {
-                background: url("../img/pl.svg") no-repeat center, #292929;
+                background: url("img/pl.svg") no-repeat center, #292929;
                 border: 3px solid #e0e0e0;
                 box-shadow: 0 0 0 3px rgb(127, 166, 80);
             }
@@ -553,17 +553,17 @@
                 width: 5vw;
                 height: 5vw;
                 vertical-align: middle;
-                background: url("../img/mixed.svg") no-repeat center, #292929;
+                background: url("img/mixed.svg") no-repeat center, #292929;
                 transition: all 0.2s ease;
                 border-radius: 0.2em;
                 box-sizing: border-box;
             }
             #radRand:hover {
-                background: url("../img/mixed.svg") no-repeat center, #2d2d2d;
+                background: url("img/mixed.svg") no-repeat center, #2d2d2d;
                 cursor: pointer;
             }
             [type=radio]:checked + #radRand {
-                background: url("../img/mixed.svg") no-repeat center, #292929;
+                background: url("img/mixed.svg") no-repeat center, #292929;
                 border: 3px solid #e0e0e0;
                 box-shadow: 0 0 0 3px rgb(127, 166, 80);
             }
@@ -573,17 +573,17 @@
                 position: relative;
                 width: 5vw;
                 height: 5vw;
-                background: url("../img/pd.svg") no-repeat center, #292929;
+                background: url("img/pd.svg") no-repeat center, #292929;
                 transition: all 0.2s ease;
                 border-radius: 0.2em;
                 box-sizing: border-box;
             }
             #radBlack:hover {
-                background: url("../img/pd.svg") no-repeat center, #2d2d2d;
+                background: url("img/pd.svg") no-repeat center, #2d2d2d;
                 cursor: pointer;
             }
             [type=radio]:checked + #radBlack {
-                background: url("../img/pd.svg") no-repeat center, #292929;
+                background: url("img/pd.svg") no-repeat center, #292929;
                 border: 3px solid #e0e0e0;
                 box-shadow: 0 0 0 3px rgb(127, 166, 80);
             }
