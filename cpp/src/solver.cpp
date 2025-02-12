@@ -1,4 +1,7 @@
-// solver.cpp
+// the main code that handles all of the bots moves in 3D Chess.
+// the bot is not anything like stockfish where they find 90TB worth of chess games and see which move can cause the best win
+// the way the bot "finds" move will be unknown unless if you look in the source code.
+// please do not try to call this specific cpp because its only soul purpose is just for board.js
 #include "../include/solver.h"
 
 #include <chrono>  // Required for timing
@@ -448,7 +451,7 @@ Turn Solver::nextMove(Board &board, int color) {
     if (difficulty == 1) {
         searchDepth = 3; // Medium difficulty
     } else {
-        searchDepth = 4; // Hard difficulty
+        searchDepth = 10; // Hard difficulty
     }
 
     Turn bestMove;
