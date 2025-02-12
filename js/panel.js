@@ -18,7 +18,7 @@ class Panel {
                 name2 += "Computer (Normal)";
                 break;
             case "2":
-                name2 += "Computer (Hard)";
+                name2 += "Computer (Final Boss)";
                 break;
             default:
                 name2 += "Player";
