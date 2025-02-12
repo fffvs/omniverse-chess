@@ -1,4 +1,7 @@
+// solver.cpp
 #include "../include/solver.h"
+
+#include <chrono>  // Required for timing
 
 // Setting up the mersenne twister random number generator for better random number generation
 random_device Solver::m_rd;
@@ -9,6 +12,17 @@ uniform_int_distribution<int> Solver::rng(0, INF);
 unordered_map<char, int> Solver::pieceWeight = {
     {'b', 40}, {'k', 100}, {'n', 40}, {'p', 30}, {'q', 60}, {'r', 50}, {'u', 40}
 };
+
+// Initialize piece-square table
+int Solver::pieceSquareTable[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE] = {
+    {{0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}},
+    {{5,  5,  5,  5,  5}, {5,  5,  5,  5,  5}, {5,  5,  5,  5,  5}, {5,  5,  5,  5,  5}, {5,  5,  5,  5,  5}},
+    {{1,  1,  2,  1,  1}, {1,  1,  2,  1,  1}, {1,  1,  2,  1,  1}, {1,  1,  2,  1,  1}, {1,  1,  2,  1,  1}},
+    {{0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}},
+    {{0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}}
+};
+
+
 
 // Parameterized constructor
 Solver::Solver(int difficulty_) {
@@ -47,16 +61,42 @@ bool Solver::canPromote(Piece* piece){
      (piece->getColor() == BLACK && piece->getLocation().row + piece->getLocation().lvl == 0));
 }
 
+int Solver::mobilityScore(Board &board, Piece *piece) {
+    if (!piece->getIsAlive()) return 0;
+    return piece->getMoves(board, false).size(); // Number of possible moves
+
+}
+
+int Solver::kingSafetyScore(Board &board, int color) {
+    // Implement a function to evaluate king safety
+    // Consider:
+    // - Number of attackers near the king
+    // - Presence of defenders
+    // - Open files/diagonals towards the king
+    // - King's location (center vs. corner)
+    Coordinate kingLocation = board.getKingLocation(color);
+    int score = 0;
+    // Example:  Penalize if the king is in the center
+    score -= (abs(kingLocation.row - 2) + abs(kingLocation.col - 2) + abs(kingLocation.lvl - 2));
+    return score;
+}
+
 // Utility function to evaluate the current board entirely
 int Solver::evaluate(Board &board){
     int score = 0;
     for(int row = 0; row < BOARD_SIZE; ++row){
         for(int col = 0; col < BOARD_SIZE; ++col){
             for(int lvl = 0; lvl < BOARD_SIZE; ++lvl){
-                score += pieceScore(board.getPieceAt(row, col, lvl));
+                Piece* piece = board.getPieceAt(row, col, lvl);
+                if(piece->getId() != ' ') {
+                    score += pieceScore(piece);
+                    score += pieceSquareTable[row][col][lvl] * piece->getColor();
+                    score += mobilityScore(board, piece) * piece->getColor();
+                }
             }
         }
     }
+    score += kingSafetyScore(board, WHITE) - kingSafetyScore(board, BLACK);
     return score;
 }
 
@@ -90,52 +130,102 @@ vector<Turn> Solver::genMoves(Board &board, int color){
     }
     // Sort moves in decreasing score (Start with the more promising moves first) for better alpha-beta pruning effect
     if(color == WHITE){
-        sort(moves.begin(), moves.end(), [](const Turn &lhs, const Turn &rhs){ return lhs.score > rhs.score;});
+       sort(moves.begin(), moves.end(), [&](const Turn &lhs, const Turn &rhs){
+          // 1. Prioritize captures (highest score if capturing a valuable piece)
+          Coordinate newLocLhs = lhs.currentLocation + lhs.change;
+          Coordinate newLocRhs = rhs.currentLocation + rhs.change;
+
+          int lhsCaptureScore = Solver::pieceWeight[board.getPieceAt(newLocLhs)->getId()];
+          int rhsCaptureScore = Solver::pieceWeight[board.getPieceAt(newLocRhs)->getId()];
+
+          if(lhsCaptureScore > 0 || rhsCaptureScore > 0){
+            return lhsCaptureScore > rhsCaptureScore;
+          }
+
+          // 2. Then prioritize moves that improve piece position (higher score)
+          return lhs.score > rhs.score;
+        });
     } else {
-        sort(moves.begin(), moves.end(), [](const Turn &lhs, const Turn &rhs){ return lhs.score < rhs.score;});
+        sort(moves.begin(), moves.end(), [&](const Turn &lhs, const Turn &rhs){
+          Coordinate newLocLhs = lhs.currentLocation + lhs.change;
+          Coordinate newLocRhs = rhs.currentLocation + rhs.change;
+
+          int lhsCaptureScore = Solver::pieceWeight[board.getPieceAt(newLocLhs)->getId()];
+          int rhsCaptureScore = Solver::pieceWeight[board.getPieceAt(newLocRhs)->getId()];
+
+          if(lhsCaptureScore > 0 || rhsCaptureScore > 0){
+            return lhsCaptureScore < rhsCaptureScore;
+          }
+          return lhs.score < rhs.score;
+        });
     }
     return moves;
 }
 
-Turn Solver::nextMove(Board &board, int color){
-    // Count the number of pieces left to determine the stage of the game (start, middle, end)
-    int countPieces = 0;
-    for(int i = 0; i < BOARD_SIZE; ++i)
-        for(int j = 0; j < BOARD_SIZE; ++j)
-            for(int k = 0; k < BOARD_SIZE; ++k)
-                if(board.board[i][j][k]->getColor() == -color && board.board[i][j][k]->getIsAlive())
-                    ++countPieces;
-    // For the easy difficulty we arbitrarily pick a piece (while there are many pieces left on the board)
-    if(difficulty == 0 && countPieces >= 10){
-        // Easy mode -- randomly choose a move
-        vector<char> active;
-        vector<Turn> moves = genMoves(board, color);
-        // Shuffle to randomize the moves
-        shuffle(moves.begin(), moves.end(), m_rng);
-        // Just in case someone tried to get another move after a checkmate
-        if(moves.empty()){
-            return Turn(0, Coordinate(-1, 0, 0), Move(0, 0, 0));
-        }
-        // Get all types of pieces remaining
-        for(auto turn : moves){
-            active.push_back(board.getPieceAt(turn.currentLocation)->getId());
-        }
-        // Remove duplicates (so that the computer doesn't always pick a pawn)
-        sort(active.begin(), active.end());
-        active.erase(unique(active.begin(), active.end()), active.end());
-        // Choose a random piece
-        char tgt = active[randRange(0, active.size() - 1)];
-        // Find an associated move and return it
-        for(auto turn : moves){
-            if(board.getPieceAt(turn.currentLocation)->getId() == tgt){
-                return turn;
-            }
-        }
-        // If no moves are somehow found, return an End Game turn
-        return Turn(0, Coordinate(-1, 0, 0), Move(0, 0, 0));
+int Solver::quiescenceSearch(Board &board, int ALPHA, int BETA, int color, int score) {
+    // Stand pat (assume no further captures are good)
+    int standPat = score;
+    if (color == WHITE) {
+        if (standPat >= BETA)
+            return BETA;
+        ALPHA = max(ALPHA, standPat);
+    } else {
+        if (standPat <= ALPHA)
+            return ALPHA;
+        BETA = min(BETA, standPat);
     }
-    // Initialize the minimax
-    return solve(board, 20, -INF, INF, color, evaluate(board));
+
+    // Generate only capture moves
+    vector<Turn> captureMoves;
+    for(Turn move : genMoves(board, color)){
+        Coordinate newLoc = move.currentLocation + move.change;
+        if(board.getPieceAt(newLoc)->getId() != ' '){
+            captureMoves.push_back(move);
+        }
+    }
+
+
+    for (Turn curMove : captureMoves) {
+        // Move new piece
+        Coordinate newLoc = curMove.currentLocation + curMove.change;
+        Piece *pawn, *oldPiece = board.getPieceAt(newLoc);
+        // Update score as well
+        int newScore = score + curMove.score;
+        board.updateLocation(curMove.currentLocation, curMove.change);
+        bool promoted = canPromote(board.getPieceAt(newLoc));
+        if(promoted){
+            // If the pawn can promote, then change the piece to a queen (the best option)
+            pawn = board.getPieceAt(newLoc);
+            // Update scores again
+            newScore -= pieceScore(board.getPieceAt(newLoc));
+            ((Pawn*)pawn)->promote(board, new Queen(newLoc.row, newLoc.col, newLoc.lvl, color), false);
+            newScore += pieceScore(board.getPieceAt(newLoc));
+        }
+        int eval = quiescenceSearch(board, ALPHA, BETA, -color, newScore);
+         // Revert the move
+        if(promoted){
+            // Delete the pointer if the pawn was promoted
+            delete board.board[newLoc.row][newLoc.col][newLoc.lvl];
+            board.board[newLoc.row][newLoc.col][newLoc.lvl] = pawn;
+        }
+        board.updateLocation(newLoc, -curMove.change);
+        if(oldPiece->getId() != ' '){
+            board.board[newLoc.row][newLoc.col][newLoc.lvl] = oldPiece;
+            oldPiece->setIsAlive(true);
+        }
+
+        if (color == WHITE) {
+            ALPHA = max(ALPHA, eval);
+            if (ALPHA >= BETA)
+                return BETA;
+        } else {
+            BETA = min(BETA, eval);
+            if (BETA <= ALPHA)
+                return ALPHA;
+        }
+    }
+    if (color == WHITE) return ALPHA;
+    return BETA;
 }
 
 Turn Solver::solve(Board &board, int depth, int ALPHA, int BETA, int color, int score){
@@ -154,9 +244,8 @@ Turn Solver::solve(Board &board, int depth, int ALPHA, int BETA, int color, int 
     if(depth == 0){
         // Evaluate board
         // For Hard mode, the randRange is smaller in an attempt to pick the optimal move
-        return Turn(score + (difficulty == 2 ? randRange(-3, 3) : randRange(-20, 20)), Coordinate(-4, -1, -1), Move(0, 0, 0));
+        return Turn(quiescenceSearch(board, ALPHA, BETA, color, score), Coordinate(-4, -1, -1), Move(0, 0, 0));
     }
-
     // Identify the best move on the board
     Turn best(color == WHITE ? -INF : INF, Coordinate(-3, -1, -1), Move(0, 0, 0));
     for(Turn curMove : genMoves(board, color)){
@@ -217,3 +306,64 @@ Turn Solver::solve(Board &board, int depth, int ALPHA, int BETA, int color, int 
     return best;
 }
 
+Turn Solver::nextMove(Board &board, int color) {
+    // Count the number of pieces left to determine the stage of the game (start, middle, end)
+    int countPieces = 0;
+    for(int i = 0; i < BOARD_SIZE; ++i)
+        for(int j = 0; j < BOARD_SIZE; ++j)
+            for(int k = 0; k < BOARD_SIZE; ++k)
+                if(board.board[i][j][k]->getColor() == -color && board.board[i][j][k]->getIsAlive())
+                    ++countPieces;
+    // For the easy difficulty we arbitrarily pick a piece (while there are many pieces left on the board)
+    if(difficulty == 0 && countPieces >= 10){
+        // Easy mode -- randomly choose a move
+        vector<char> active;
+        vector<Turn> moves = genMoves(board, color);
+        // Shuffle to randomize the moves
+        shuffle(moves.begin(), moves.end(), m_rng);
+        // Just in case someone tried to get another move after a checkmate
+        if(moves.empty()){
+            return Turn(0, Coordinate(-1, 0, 0), Move(0, 0, 0));
+        }
+        // Get all types of pieces remaining
+        for(auto turn : moves){
+            active.push_back(board.getPieceAt(turn.currentLocation)->getId());
+        }
+        // Remove duplicates (so that the computer doesn't always pick a pawn)
+        sort(active.begin(), active.end());
+        active.erase(unique(active.begin(), active.end()), active.end());
+        // Choose a random piece
+        char tgt = active[randRange(0, active.size() - 1)];
+        // Find an associated move and return it
+        for(auto turn : moves){
+            if(board.getPieceAt(turn.currentLocation)->getId() == tgt){
+                return turn;
+            }
+        }
+        // If no moves are somehow found, return an End Game turn
+        return Turn(0, Coordinate(-1, 0, 0), Move(0, 0, 0));
+    }
+
+    // Medium and Hard difficulties use iterative deepening
+    int maxDepth;
+    if (difficulty == 1) {
+        maxDepth = 3; // Medium difficulty
+    } else {
+        maxDepth = 5; // Hard difficulty
+    }
+
+    Turn bestMove;
+    int bestScore = (color == WHITE) ? -INF : INF;
+
+    // Iterative Deepening
+    for (int depth = 1; depth <= maxDepth; ++depth) {
+        Turn currentMove = solve(board, depth, -INF, INF, color, evaluate(board));
+
+        if ((color == WHITE && currentMove.score > bestScore) || (color == BLACK && currentMove.score < bestScore)) {
+            bestMove = currentMove;
+            bestScore = currentMove.score;
+        }
+    }
+
+    return bestMove;
+}

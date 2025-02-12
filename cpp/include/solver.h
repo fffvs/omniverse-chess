@@ -9,6 +9,7 @@
 #include "pawn.h"
 #include "queen.h"
 #include "globals.h"
+#include <chrono>
 
 class Solver {
     private:
@@ -19,8 +20,12 @@ class Solver {
         int distance(Coordinate coord);
         int pieceScore(Piece *piece);
         bool canPromote(Piece* piece);
+        int mobilityScore(Board &board, Piece *piece);
+        int kingSafetyScore(Board &board, int color);
+        int quiescenceSearch(Board &board, int ALPHA, int BETA, int color, int score);
         // Static variables
         static unordered_map<char, int> pieceWeight;
+        static int pieceSquareTable[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
         // Random number generator
         static random_device m_rd;
         static mt19937 m_rng;
