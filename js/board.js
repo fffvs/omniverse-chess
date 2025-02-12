@@ -441,13 +441,13 @@ class Board {
         var sound;
         // Play correct sound based on movement type performed
         if (moveInfo.enemyMated || moveInfo.isStalemate)
-            sound = new Audio("../sfx/game-end.wav");
+            sound = new Audio("sfx/game-end.wav");
         else if (moveInfo.enemyChecked)
-            sound = new Audio("../sfx/move-check.wav");
+            sound = new Audio("sfx/move-check.wav");
         else if (moveInfo.capturedPiece)
-            sound = new Audio("../sfx/capture.wav");
+            sound = new Audio("sfx/capture.wav");
         // normal move sound effect
-        else sound = new Audio("../sfx/move-self.wav");
+        else sound = new Audio("sfx/move-self.wav");
 
         sound.play();
     }
@@ -662,7 +662,7 @@ class Board {
                 throw "ERROR: promoteId is invalid";
         }
         cppPawn.promote(this.cppBoard, cppPromotedPiece, true);
-        var promote = new Audio("../sfx/promote.wav");
+        var promote = new Audio("sfx/promote.wav");
         promote.play();
 
         var moveInfo = this.getMoveInfo(row, col, lvl, promoteId[0]);
