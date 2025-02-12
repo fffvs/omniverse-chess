@@ -135,7 +135,7 @@ Turn Solver::nextMove(Board &board, int color){
         return Turn(0, Coordinate(-1, 0, 0), Move(0, 0, 0));
     }
     // Initialize the minimax
-    return solve(board, 5, -INF, INF, color, evaluate(board));
+    return solve(board, 10, -INF, INF, color, evaluate(board));
 }
 
 Turn Solver::solve(Board &board, int depth, int ALPHA, int BETA, int color, int score){
