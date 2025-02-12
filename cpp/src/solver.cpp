@@ -18,11 +18,11 @@ std::unordered_map<char, int> Solver::pieceWeight = {
 
 // Initialize piece-square table (example)
 int Solver::pieceSquareTable[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE] = {
-    {{-5,-5, 0, 5, 5}, {-5,0,10,0,-5}, {0,10,20,10,0}, {5,0,10,0,-5}, {5, 5, 0, -5, -5}},
-    {{-5,-5, 0, 5, 5}, {-5,0,10,0,-5}, {0,10,20,10,0}, {5,0,10,0,-5}, {5, 5, 0, -5, -5}},
-    {{-5,-5, 0, 5, 5}, {-5,0,10,0,-5}, {0,10,20,10,0}, {5,0,10,0,-5}, {5, 5, 0, -5, -5}},
-    {{-5,-5, 0, 5, 5}, {-5,0,10,0,-5}, {0,10,20,10,0}, {5,0,10,0,-5}, {5, 5, 0, -5, -5}},
-    {{-5,-5, 0, 5, 5}, {-5,0,10,0,-5}, {0,10,20,10,0}, {5,0,10,0,-5}, {5, 5, 0, -5, -5}}
+    {{0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}},
+    {{5,  5,  5,  5,  5}, {5,  5,  5,  5,  5}, {5,  5,  5,  5,  5}, {5,  5,  5,  5,  5}, {5,  5,  5,  5,  5}},
+    {{1,  1,  2,  1,  1}, {1,  1,  2,  1,  1}, {1,  1,  2,  1,  1}, {1,  1,  2,  1,  1}, {1,  1,  2,  1,  1}},
+    {{0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}},
+    {{0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}, {0,  0,  0,  0,  0}}
 };
 
 // Parameterized constructor
@@ -62,26 +62,15 @@ bool Solver::canPromote(Piece* piece){
 
 int Solver::mobilityScore(Board &board, Piece *piece) {
     if (!piece->getIsAlive()) return 0;
-    int score = piece->getMoves(board, false).size(); // Number of possible moves
-    if (dynamic_cast<Bishop*>(piece) || dynamic_cast<Queen*>(piece)) {
-        score *= 1.2; // Bonus for 3D diagonal movement
-    }
-    return score;
+    return piece->getMoves(board, false).size(); // Number of possible moves
 }
 
 int Solver::kingSafetyScore(Board &board, int color) {
     Coordinate kingLocation = board.getKingLocation(color);
-    int danger = 0;
-    // Check for enemy pieces in 3D proximity
-    for(int lvl = max(0,kingLocation.lvl-1); lvl <= min(4,kingLocation.lvl+1); lvl++) {
-        for(int row = max(0,kingLocation.row-1); row <= min(4,kingLocation.row+1); row++) {
-            for(int col = max(0,kingLocation.col-1); col <= min(4,kingLocation.col+1); col++) {
-                Piece* target = board.getPieceAt(row, col, lvl);
-                if(target->color == -color && target->id != 'k') danger++;
-            }
-        }
-    }
-    return -danger * 15;
+    int score = 0;
+    // Penalize if the king is in the center or near open files/diagonals
+    score -= (abs(kingLocation.row - 2) + abs(kingLocation.col - 2) + abs(kingLocation.lvl - 2));
+    return score;
 }
 
 int Solver::evaluateLevelControl(Board &board, int color) {
@@ -112,11 +101,7 @@ int Solver::evaluateSpaceControl(Board &board, int color) {
                 if (piece->getColor() == color) {
                     //Count how many empty locations the color has
                     for (Move m : piece->getMoves(board, false)) {
-                        Coordinate target = piece->getLocation() + m;
-                        if (target.row >= 0 && target.row < BOARD_SIZE &&
-                            target.col >= 0 && target.col < BOARD_SIZE &&
-                            target.lvl >= 0 && target.lvl < BOARD_SIZE &&
-                            board.getPieceAt(target)->getId() == ' ') score++;
+                        if (board.getPieceAt(piece->getLocation() + m)->getId() == ' ') score++;
                     }
                 }
             }
@@ -139,92 +124,143 @@ int Solver::evaluatePieceCoordination(Board &board, int color) {
     return score * PIECE_COORDINATION_BONUS; // Placeholder
 }
 
-bool Solver::attacksMultipleLayers(Move move) {
-    return abs(move.lvl) > 1 || abs(move.col) > 1 || abs(move.row) > 1;
-}
-
-bool Solver::creates3DPin(Move move) {
-    //Needs actual implementation to detect 3D pins
-    return false;
-}
-
-int Solver::evaluateHangingPieces(Board &board, int color) {
-    int hangingPieces = 0;
-    for (int row = 0; row < BOARD_SIZE; ++row) {
-        for (int col = 0; col < BOARD_SIZE; ++col) {
-            for (int lvl = 0; lvl < BOARD_SIZE; ++lvl) {
-                Piece* piece = board.getPieceAt(row, col, lvl);
-                if (piece->getColor() == color && piece->getId() != 'k') { //Don't want the king
-                    bool isSupported = false;
-                    for (int dr = -1; dr <= 1; ++dr) {
-                        for (int dc = -1; dc <= 1; ++dc) {
-                            for (int dl = -1; dl <= 1; ++dl) {
-                                if (dr == 0 && dc == 0 && dl == 0) continue;
-                                int newRow = row + dr, newCol = col + dc, newLvl = lvl + dl;
-                                if (newRow >= 0 && newRow < BOARD_SIZE && newCol >= 0 && newCol < BOARD_SIZE && newLvl >= 0 && newLvl < BOARD_SIZE) {
-                                    Piece* supportingPiece = board.getPieceAt(newRow, newCol, newLvl);
-                                    if (supportingPiece->getColor() == color) {
-                                        isSupported = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (isSupported) break;
-                        }
-                        if (isSupported) break;
-                    }
-                    if (!isSupported) hangingPieces++;
-                }
-            }
-        }
-    }
-    return hangingPieces;
-}
-
 int Solver::evaluateThreats(Board &board, int color) {
-    int threats = 0;
+    int score = 0;
     // Implementation to evaluate immediate and potential threats
     // This might involve checking for attacked pieces, potential checkmates, etc.
-    for (int row = 0; row < BOARD_SIZE; ++row) {
-        for (int col = 0; col < BOARD_SIZE; ++col) {
-            for (int lvl = 0; lvl < BOARD_SIZE; ++lvl) {
+    return score * THREAT_WEIGHT; // Placeholder
+}
+
+int Solver::evaluate3DSpaceControl(Board &board, int color) {
+    int score = 0;
+    for (int lvl = 0; lvl < BOARD_SIZE; ++lvl) {
+        for (int row = 0; row < BOARD_SIZE; ++row) {
+            for (int col = 0; col < BOARD_SIZE; ++col) {
                 Piece* piece = board.getPieceAt(row, col, lvl);
-                if(piece->getColor() == color) {
-                   auto moves = piece->getMoves(board, true);
-                    for (Move move : moves) {
-                        Coordinate newLoc = piece->getLocation() + move;
-                        Piece* target = board.getPieceAt(newLoc);
-                        if (target->getColor() == -color && target->getId() != 'k'){
-                            threats += pieceWeight[target->getId()]; //Value of threatened piece
-
-                        }
-                        if(attacksMultipleLayers(move)) threats += 50;
-                        if(creates3DPin(move)) threats += 30;
-
-                    }
+                if (piece->getColor() == color) {
+                    score += piece->getMoves(board, false).size() * (3 - abs(lvl - 2));
                 }
             }
         }
     }
-    return threats * THREAT_WEIGHT;
+    return score * SPACE_CONTROL_WEIGHT;
 }
 
-int Solver::evaluateCubeControl(Board &board, int color) {
-    int control = 0;
-    for(int lvl=1; lvl<4; lvl++) {
-        for(int x=1; x<4; x++) { // Center cubes
-            for(int y=1; y<4; y++) {
-                Piece *piece = board.getPieceAt(x, y, lvl);
-                if(piece->getColor() == color) control++;
+int Solver::countSupportingPieces(Board &board, Coordinate coord, int color) {
+    int count = 0;
+    for (int lvl = std::max(0, coord.lvl - 1); lvl <= std::min(BOARD_SIZE - 1, coord.lvl + 1); ++lvl) {
+        for (int row = std::max(0, coord.row - 1); row <= std::min(BOARD_SIZE - 1, coord.row + 1); ++row) {
+            for (int col = std::max(0, coord.col - 1); col <= std::min(BOARD_SIZE - 1, coord.col + 1); ++col) {
+                if ((row != coord.row || col != coord.col || lvl != coord.lvl) && board.getPieceAt(row, col, lvl)->getColor() == color) {
+                    count++;
+                }
             }
         }
     }
-    return control * 10;
+    return count;
 }
 
-int Solver::evaluate3DPatterns(Board &board) {
-    // Placeholder for pattern recognition
-    return 0;
+int Solver::evaluate3DPawnColumn(Board &board, int col, int lvl, int color) {
+    int score = 0;
+    int pawnCount = 0;
+    bool hasOpenSpace = false;
+    for (int row = 0; row < BOARD_SIZE; ++row) {
+        Piece* piece = board.getPieceAt(row, col, lvl);
+        if (piece->getId() == 'p' && piece->getColor() == color) {
+            pawnCount++;
+        } else if (piece->getId() == ' ') {
+            hasOpenSpace = true;
+        }
+    }
+    if (pawnCount > 1) score -= 10; // Penalize doubled pawns
+    if (hasOpenSpace) score += 5; // Reward open columns
+    return score;
+}
+
+int Solver::evaluate3DMaterialBalance(Board &board, int color) {
+    int materialScore = 0;
+    for (int lvl = 0; lvl < BOARD_SIZE; ++lvl) {
+        for (int row = 0; row < BOARD_SIZE; ++row) {
+            for (int col = 0; col < BOARD_SIZE; ++col) {
+                Piece* piece = board.getPieceAt(row, col, lvl);
+                if (piece->getColor() == color) {
+                    materialScore += pieceWeight[piece->getId()];
+                } else if (piece->getColor() == -color) {
+                    materialScore -= pieceWeight[piece->getId()];
+                }
+            }
+        }
+    }
+    return materialScore;
+}
+
+void Solver::updatePieceSquareTable(Board &board) {
+    for (int lvl = 0; lvl < BOARD_SIZE; ++lvl) {
+        for (int row = 0; row < BOARD_SIZE; ++row) {
+            for (int col = 0; col < BOARD_SIZE; ++col) {
+                pieceSquareTable[row][col][lvl] = calculateSquareValue(board, {row, col, lvl});
+            }
+        }
+    }
+}
+
+int Solver::calculateSquareValue(Board &board, Coordinate coord) {
+    int value = 0;
+    // Example: Increase value if the square controls important areas
+    for (int lvl = std::max(0, coord.lvl - 1); lvl <= std::min(BOARD_SIZE - 1, coord.lvl + 1); ++lvl) {
+        for (int row = std::max(0, coord.row - 1); row <= std::min(BOARD_SIZE - 1, coord.row + 1); ++row) {
+            for (int col = std::max(0, coord.col - 1); col <= std::min(BOARD_SIZE - 1, coord.col + 1); ++col) {
+                if (board.getPieceAt(row, col, lvl)->getId() == ' ') {
+                    value++; // More control over empty squares
+                }
+            }
+        }
+    }
+    return value;
+}
+
+int Solver::evaluate3DPawnStructure(Board &board, int color) {
+    int score = 0;
+    for (int lvl = 0; lvl < BOARD_SIZE; ++lvl) {
+        for (int col = 0; col < BOARD_SIZE; ++col) {
+            score += evaluate3DPawnColumn(board, col, lvl, color);
+        }
+    }
+    return score * PAWN_STRUCTURE_WEIGHT;
+}
+
+bool Solver::shouldApplyNullMove(Board &board, int color, int depth) {
+    if (isEndgame(board)) return false;
+    if (board.isChecked(color)) return false;
+    if (depth < 3) return false;
+    return evaluate3DMaterialBalance(board, color) > NULL_MOVE_MARGIN;
+}
+
+Turn Solver::iterativeDeepening(Board &board, int maxDepth, int color) {
+    Turn bestMove;
+    for (int depth = 1; depth <= maxDepth; ++depth) {
+        Turn currentBest = solve(board, depth, -INF, INF, color, evaluate(board));
+        if (depth > 1 && abs(currentBest.score - bestMove.score) > STABILITY_THRESHOLD) {
+            break;
+        }
+        bestMove = currentBest;
+    }
+    return bestMove;
+}
+
+int Solver::evaluatePieceCoordination(Board &board, int color) {
+    int score = 0;
+    for (int lvl = 0; lvl < BOARD_SIZE; ++lvl) {
+        for (int row = 0; row < BOARD_SIZE; ++row) {
+            for (int col = 0; col < BOARD_SIZE; ++col) {
+                Piece* piece = board.getPieceAt(row, col, lvl);
+                if (piece->getColor() == color) {
+                    score += countSupportingPieces(board, {row, col, lvl}, color);
+                }
+            }
+        }
+    }
+    return score * COORDINATION_WEIGHT;
 }
 
 // Utility function to evaluate the current board entirely
@@ -248,14 +284,8 @@ int Solver::evaluate(Board &board){
     score += evaluateOutposts(board, WHITE) - evaluateOutposts(board, BLACK);
     score += evaluatePieceCoordination(board, WHITE) - evaluatePieceCoordination(board, BLACK);
     score += evaluateThreats(board, WHITE) - evaluateThreats(board, BLACK);
-    score += evaluateCubeControl(board, WHITE) - evaluateCubeControl(board, BLACK);
-    score -= evaluateHangingPieces(board, WHITE) - evaluateHangingPieces(board, BLACK);
-
-    if(difficulty == HARD) {
-        score += evaluateCubeControl(board, WHITE) - evaluateCubeControl(board, BLACK) * 1.5;
-        score += evaluate3DPatterns(board); // Pre-calculated 3D motifs
-        score -= evaluateHangingPieces(board, WHITE) - evaluateHangingPieces(board, BLACK) * 2;
-    }
+    score += evaluate3DSpaceControl(board, WHITE) - evaluate3DSpaceControl(board, BLACK);
+    score += evaluate3DPawnStructure(board, WHITE) - evaluate3DPawnStructure(board, BLACK);
 
     return score;
 }
@@ -409,9 +439,10 @@ int Solver::quiescenceSearch(Board &board, int ALPHA, int BETA, int color, int d
 }
 
 Turn Solver::solve(Board &board, int depth, int ALPHA, int BETA, int color, int score){
+
     if (difficulty == HARD_MODE) {
-        depth += 6; // Deeper search for hard mode
-        MAX_QUIESCENCE_DEPTH = 15;
+        depth += 5; // Significantly deeper search for hard mode
+        MAX_QUIESCENCE_DEPTH = 10; // Increase quiescence depth
     }
     // First look for checkmates, then stalemates
     if(board.isChecked(color)){
