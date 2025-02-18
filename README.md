@@ -9,6 +9,6 @@ This current version has a functioning 4D Chess being worked on right now.
 3D Chess Progress: Done ☑️
 
 
-4D Chess Progress: Done? 
+4D Chess Progress: Done? ☑️
 
 5D Chess Progress: HTML is not even been made yet :sob:
