@@ -1,847 +1,249 @@
-<html><head>
-  <title>4D Chess</title>
-  <!--	Disable Zoom on mobile	-->
-  <meta name="viewport" content="width=device-width, user-scalable=no">
-  <script src="socket.io/socket.io.js"></script>
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono|Source+Code+Pro|Ubuntu+Mono&amp;display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/94/three.js"></script>
-  <script src="js/TrackballControls.js"></script>
-  <script src="js/Detector.js"></script>
-  <script src="js/Models.js"></script>
-  <script src="js/GameBoard.js"></script>
-  <script src="js/Mode.js"></script>
-  <script src="js/MoveManager.js"></script>
-  <script src="js/Piece.js"></script>
-  <script src="js/Pointer.js"></script>
-  <script src="js/Animation.js"></script>
-  <script src="js/ClientStateManager.js"></script>
-  <script src="js/ClientState.js"></script>
-  <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin=""></script>
-  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin=""></script>
-  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-  <script src="https://unpkg.com/@material-ui/core@4.9.5/umd/material-ui.development.js"></script>
-  <script src="js/lodash.js"></script>
-  <style>
-    /* Prevent Scrolling */
-html, body { 
-	margin: 0px;
-	overflow-x: hidden;
-	overflow-y: hidden;
-	background-image: linear-gradient(to bottom, #03055B, #050A1F);
-}
-body {
-	position: relative;
-}
-
-.text {
-/*	font-family: 'Roboto Mono', monospace;*/
-	font-family: 'Source Code Pro', monospace;
-/*	font-family: 'Ubuntu Mono', monospace;*/
-	color: #3f3f3f;
-/*	font-size: 3.8em;*/
-/*	font-size: 7.6vh;*/
-	font-size: 9.6vh;
-/*	font-weight: 700;*/
-/*    letter-spacing: 4px;*/
-}
-
-.overlay {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	pointer-events: none;
-
-	/* No Highlight */
-	-webkit-touch-callout: none; /* iOS Safari */
-	-webkit-user-select: none; /* Safari */
-	 -khtml-user-select: none; /* Konqueror HTML */
-	   -moz-user-select: none; /* Old versions of Firefox */
-		-ms-user-select: none; /* Internet Explorer/Edge */
-			user-select: none; /* Non-prefixed version, currently
-								  supported by Chrome, Opera and Firefox */				
-}
-
-.circleButton > img {
-	/* No Drag */
-	-webkit-user-drag: none; /* Safari */
-	 -khtml-user-drag: none; /* Konqueror HTML */
-	   -moz-user-drag: none; /* Old versions of Firefox */
-		 -o-user-drag: none;
-		-ms-user-drag: none; /* Internet Explorer/Edge */
-			user-drag: none; /* Non-prefixed version, currently
-								  supported by Chrome, Opera and Firefox */
-}
-
-.moveHistoryButton {
-/*	position: fixed;*/
-	display: inline-block;
-	position: relative;
-	padding: 1%; /* Circle Radius */
-	border-radius: 50%; /* Make circle */
-	margin-bottom: 0px;
-	background-color: #FFFFFF;
-	opacity: .6;
-	z-index: 999;
-	box-shadow: 0 0 4px rgba(0,0,0,.15);
-	pointer-events: auto;
-/*	bottom: 1em;*/
-	border-radius:0.15em;
-	box-sizing: border-box;
-	font-family:'Roboto',sans-serif;
-	text-transform:uppercase;
-	box-shadow:inset 0 -0.6em 0 -0.35em rgba(0,0,0,0.17);
-	vertical-align: middle;
-}
-
-.moveHistoryButton:active{
-/*	top:0.1em;*/
-/*	bottom: 0.8em;*/
-	bottom: -0.2em;
-	box-shadow: none;
-}
-/*
-@media all and (max-width:30em) {
- .circleButton {
-  display:block;
-  margin:0.4em auto;
- }
-}
-*/
-
-.moveHistoryButton:hover {
-	opacity: 0.9;
-}
-
-.rectButton {
-	pointer-events: auto;
-	display: block;
-/*	position: absolute;*/
-	transition: .4s;
-	box-shadow: 0 0 4px rgba(0,0,0,.17);
-	border-radius: 8px;
-	
-}
-
-.rectButton:hover {
-/*	background-color: #3f3f3f;*/
-/*	box-shadow: 0 0 4px rgba(0,0,0,.1);*/
-}
-
-/*
-#redoButton {
-	right: 42%;
-}
-
-#undoButton {
-	right: 58%;
-}
-*/
-
-.toolbarItem {
-	display: inline-block;
-	text-align: center;
-}
-
-#toolbar {
-	display: inline-block;
-	text-align: center;
-	width: 100%;
-	height: auto;
-	position: absolute;
-	bottom: 1em;
-	overflow: visible;
-}
-
-#moveStatus {
-/*
-	min-width: 10vw;
-	width: auto;
-*/
-	width: 14vw;
-	margin: 0 1vw;
-	font-size: 1.4em;
-}
-
-#playButton {
-/*
-	width: 24em;
-	height: 14.8em;
-*/
-	margin-left: auto;
-    margin-right: auto;
-/*	margin-top: 5%;*/
-	margin-top: 10vh;
-	margin-bottom: auto;
-	
-	right: 50%;
-/*	bottom: 16px;*/
-	margin-bottom: 0px;
-/*	width: 7em;*/
-	
-/*    height: 3em;*/
-/*    height: 3em;*/
-	
-/*
-	width: 34vw;
-	height: 31vh;
-*/
-	
-	width: auto;
-	height: auto;
-	padding: 9.5vh 11vw;
-	
-	
-	background-color: #f6f6f6;
-	color: #3f3f3f;
-	
-	border: none;
-	text-align: center;
-	text-decoration: none;
-/*	font-size: 4em;*/
-	font-size: 10.4vh;
-}
-
-#playOptionsMenu {
-	padding-top: 3vh;
-	text-align: center;
-}
-
-.playOptionButton {
-	margin-left: auto;
-    margin-right: auto;
-	margin-top: 5vh;
-/*	margin-bottom: auto;*/
-/*	margin-bottom: 1vh;*/
-	border: none;
-	text-align: center;
-	text-decoration: none;
-	font-size: 5.2vh;
-	
-	min-width: 40vw;
-	width: auto;
-	height: auto;
-	padding: 2vh 4.8vw;
-	
-/*
-	background-color: #f6f6f6;
-	color: #3f3f3f;
-*/
-	background-color: #3f3f3f;
-	color: #f6f6f6;
-}
-
-#matchmakingButton {
-	background-color: #f6f6f6;
-	color: #3f3f3f;
-}
-
-#localMultiplayerButton {
-	background-color: #f6f6f6;
-	color: #3f3f3f;
-}
-
-#sandboxButton {
-	background-color: #f6f6f6;
-	color: #3f3f3f;
-}
-
-#privateRoomButton {
-	margin-left: auto;
-    margin-right: auto;
-	margin-top: 5vh;
-	margin-bottom: auto;
-	border: none;
-	text-align: center;
-	text-decoration: none;
-	font-size: 5.2vh;
-	
-	width: auto;
-	height: auto;
-	padding: 2vh 4.8vw;
-	
-	background-color: #3f3f3f;
-	color: #f6f6f6;
-}
-
-
-#gameTitle {
-	text-align: center;
-/*	margin-top: 0.5em;*/
-	margin-top: 6.5vh;
-	margin-bottom: 0;
-/*	font-size: 5em;*/
-	font-size: 13vh;
-}
-
-#gameSubTitle {
-	text-align: center;
-/*	margin-top: 0.1em;*/
-	margin-top: 1.3vh;
-	font-size: 5.5vh;
-}
-  </style>
-  <script type="text/babel" src="js/app.js"></script>
-  <script type="text/babel" src="js/UI.js"></script>
-<script>"use strict";
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJhcHAuanMiLCJzb3VyY2VzQ29udGVudCI6W119</script><script>"use strict";
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJVSS5qcyIsInNvdXJjZXNDb250ZW50IjpbXX0=</script><script>'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var App = function (_React$Component) {
-_inherits(App, _React$Component);
-
-function App(props) {
-_classCallCheck(this, App);
-
-var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
-
-_this.state = { clientState: stateManager.state };
-_this.swapState = _this.swapState.bind(_this);
-_this.exitMenu = _this.exitMenu.bind(_this);
-_this.backToMenu = _this.backToMenu.bind(_this);
-
-_this.playButtonClick = _this.playButtonClick.bind(_this);
-_this.matchmake = _this.matchmake.bind(_this);
-_this.createSandboxGame = _this.createSandboxGame.bind(_this);
-_this.createLocalGame = _this.createLocalGame.bind(_this);
-return _this;
-}
-
-_createClass(App, [{
-key: 'swapState',
-value: function swapState(clientState) {
-  console.log("App.swapState called");
-  this.setState({
-    clientState: clientState
-  });
-  stateManager.swapState(clientState);
-}
-}, {
-key: 'exitMenu',
-value: function exitMenu() {
-  var whichSide = -2 * moveManager.clientTeam + 1;
-  if (moveManager.clientTeam === -1) {
-    whichSide = 1;
-  }
-  var cameraDestination = new THREE.Vector3(600 * whichSide, 510, gameBoard.graphics.getCenter().z);
-  var smoothness = 3 / 300;
-  var squaredEpsilon = 100;
-  var interpolatedCoords = CameraAnimation.smoothLerp(camera.position, cameraDestination, smoothness, squaredEpsilon);
-  CameraAnimation.addToQueue(animationQueue, camera, interpolatedCoords);
-  this.swapState(ClientState.GAME_STATE);
-}
-}, {
-key: 'matchmake',
-value: function matchmake() {
-  socket.emit('matchmake');
-  // TODO: Show matchmaking screen
-  uiProxy.exitMenu();
-}
-}, {
-key: 'createPrivateGame',
-value: function createPrivateGame() {
-  var gameID = genGameId();
-  socket.emit('join', gameID);
-  history.pushState({}, null, gameID);
-}
-}, {
-key: 'createSandboxGame',
-value: function createSandboxGame() {
-  history.pushState({}, null, 'sandbox');
-  moveManager.setMode(Mode.SANDBOX);
-  moveManager.updateUI();
-  moveManager.updateSelectability();
-  this.exitMenu();
-}
-}, {
-key: 'createLocalGame',
-value: function createLocalGame() {
-  history.pushState({}, null, 'localGame');
-  moveManager.setMode(Mode.LOCAL_MULTIPLAYER);
-  moveManager.updateUI();
-  moveManager.updateSelectability();
-  this.exitMenu();
-}
-}, {
-key: 'componentDidMount',
-value: function componentDidMount() {
-  uiProxy = new UI(this);
-}
-}, {
-key: 'render',
-value: function render() {
-  if (this.state.clientState === ClientState.MENU) {
-    return this.menu();
-  } else if (this.state.clientState === ClientState.PLAY_OPTIONS) {
-    return this.playOptions();
-  } else {
-    return this.game();
-  }
-}
-}, {
-key: 'menu',
-value: function menu() {
-  console.log('MENU');
-  return React.createElement(
-    'div',
-    { className: 'overlay' },
-    React.createElement(
-      'h1',
-      { className: 'text', id: 'gameTitle' },
-      '4D Chess '
-    ),
-    React.createElement(
-      'h1',
-      { className: 'text', id: 'gameSubTitle' },
-      ' Online '
-    ),
-    React.createElement(PlayButton, { id: 'playButton', text: 'Play', handleClick: this.playButtonClick }),
-    React.createElement(PlayButton, { id: 'privateRoomButton', text: 'Create Private Game', handleClick: this.createPrivateGame })
-  );
-}
-}, {
-key: 'playButtonClick',
-value: function playButtonClick() {
-  this.swapState(ClientState.PLAY_OPTIONS);
-}
-}, {
-key: 'backToMenu',
-value: function backToMenu() {
-  this.swapState(ClientState.MENU);
-}
-}, {
-key: 'playOptions',
-value: function playOptions() {
-  console.log('PLAY OPTIONS');
-  return React.createElement(
-    'div',
-    { className: 'overlay' },
-    React.createElement(
-      'div',
-      { id: 'playOptionsMenu' },
-      React.createElement(
-        'h1',
-        { className: 'text' },
-        ' Pick a Game Mode'
-      ),
-      React.createElement(PlayOption, { id: 'matchmakingButton', text: 'Online Matchmaking', handleClick: this.matchmake }),
-      React.createElement(PlayOption, { id: 'localMultiplayerButton', text: 'Local Multiplayer', handleClick: this.createLocalGame }),
-      React.createElement(PlayOption, { id: 'sandboxButton', text: 'Free Play', handleClick: this.createSandboxGame }),
-      React.createElement(PlayOption, { id: 'backToMenuButton', text: 'Back To Menu', handleClick: this.backToMenu })
-    )
-  );
-}
-}, {
-key: 'game',
-value: function game() {
-  return React.createElement(
-    'div',
-    { className: 'overlay' },
-    React.createElement(
-      'div',
-      { id: 'toolbar' },
-      React.createElement(UndoButton, { on: true, id: 'undoButton' }),
-      React.createElement(MoveStatus, { id: 'moveStatus' }),
-      React.createElement(RedoButton, { id: 'redoButton' })
-    )
-  );
-}
-}]);
-
-return App;
-}(React.Component);
-
-var MoveStatus = function (_React$Component2) {
-_inherits(MoveStatus, _React$Component2);
-
-function MoveStatus(props) {
-_classCallCheck(this, MoveStatus);
-
-var _this2 = _possibleConstructorReturn(this, (MoveStatus.__proto__ || Object.getPrototypeOf(MoveStatus)).call(this, props));
-
-_this2.state = {
-  text: ""
-};
-
-moveManager.updateUI();
-
-return _this2;
-}
-
-_createClass(MoveStatus, [{
-key: 'componentDidMount',
-value: function componentDidMount() {
-  toolbarProxy = new UI(this);
-  moveManager.updateUI();
-}
-}, {
-key: 'render',
-value: function render() {
-  return React.createElement(
-    'div',
-    { id: this.props.id, className: 'text toolbarItem' },
-    this.state.text
-  );
-}
-}]);
-
-return MoveStatus;
-}(React.Component);
-
-var RectMenuButton = function (_React$Component3) {
-_inherits(RectMenuButton, _React$Component3);
-
-function RectMenuButton(props) {
-_classCallCheck(this, RectMenuButton);
-
-var _this3 = _possibleConstructorReturn(this, (RectMenuButton.__proto__ || Object.getPrototypeOf(RectMenuButton)).call(this, props));
-
-_this3.handleClick = _this3.props.handleClick;
-return _this3;
-}
-
-_createClass(RectMenuButton, [{
-key: 'render',
-value: function render() {
-  return React.createElement(
-    'button',
-    { onClick: this.handleClick, className: 'text rectButton', id: this.props.id },
-    this.props.text
-  );
-}
-}]);
-
-return RectMenuButton;
-}(React.Component);
-
-var PlayButton = function (_RectMenuButton) {
-_inherits(PlayButton, _RectMenuButton);
-
-function PlayButton() {
-_classCallCheck(this, PlayButton);
-
-return _possibleConstructorReturn(this, (PlayButton.__proto__ || Object.getPrototypeOf(PlayButton)).apply(this, arguments));
-}
-
-return PlayButton;
-}(RectMenuButton);
-
-var PlayOption = function (_RectMenuButton2) {
-_inherits(PlayOption, _RectMenuButton2);
-
-function PlayOption() {
-_classCallCheck(this, PlayOption);
-
-return _possibleConstructorReturn(this, (PlayOption.__proto__ || Object.getPrototypeOf(PlayOption)).apply(this, arguments));
-}
-
-_createClass(PlayOption, [{
-key: 'render',
-value: function render() {
-  return React.createElement(
-    'button',
-    { onClick: this.handleClick, className: 'text rectButton playOptionButton', id: this.props.id },
-    this.props.text
-  );
-}
-}]);
-
-return PlayOption;
-}(RectMenuButton);
-
-var MoveHistoryButton = function (_React$Component4) {
-_inherits(MoveHistoryButton, _React$Component4);
-
-function MoveHistoryButton() {
-_classCallCheck(this, MoveHistoryButton);
-
-return _possibleConstructorReturn(this, (MoveHistoryButton.__proto__ || Object.getPrototypeOf(MoveHistoryButton)).apply(this, arguments));
-}
-
-_createClass(MoveHistoryButton, [{
-key: 'render',
-value: function render() {
-  return React.createElement(
-    'a',
-    { onClick: this.handleClick, className: 'moveHistoryButton toolbarItem', id: this.props.id },
-    React.createElement('img', { src: this.imgSrc })
-  );
-}
-}]);
-
-return MoveHistoryButton;
-}(React.Component);
-
-var RedoButton = function (_MoveHistoryButton) {
-_inherits(RedoButton, _MoveHistoryButton);
-
-function RedoButton(props) {
-_classCallCheck(this, RedoButton);
-
-var _this7 = _possibleConstructorReturn(this, (RedoButton.__proto__ || Object.getPrototypeOf(RedoButton)).call(this, props));
-
-_this7.imgSrc = "icons/arrow_forward_ios-24px.svg";
-_this7.handleClick = _this7.handleClick.bind(_this7);
-return _this7;
-}
-
-_createClass(RedoButton, [{
-key: 'handleClick',
-value: function handleClick() {
-  moveManager.redo();
-}
-}]);
-
-return RedoButton;
-}(MoveHistoryButton);
-
-var UndoButton = function (_MoveHistoryButton2) {
-_inherits(UndoButton, _MoveHistoryButton2);
-
-function UndoButton(props) {
-_classCallCheck(this, UndoButton);
-
-var _this8 = _possibleConstructorReturn(this, (UndoButton.__proto__ || Object.getPrototypeOf(UndoButton)).call(this, props));
-
-_this8.imgSrc = "icons/arrow_back_ios-24px.svg";
-_this8.handleClick = _this8.handleClick.bind(_this8);
-return _this8;
-}
-
-_createClass(UndoButton, [{
-key: 'handleClick',
-value: function handleClick() {
-  moveManager.undo();
-}
-}]);
-
-return UndoButton;
-}(MoveHistoryButton);
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIklubGluZSBCYWJlbCBzY3JpcHQiXSwibmFtZXMiOlsiQXBwIiwicHJvcHMiLCJzdGF0ZSIsImNsaWVudFN0YXRlIiwic3RhdGVNYW5hZ2VyIiwic3dhcFN0YXRlIiwiYmluZCIsImV4aXRNZW51IiwiYmFja1RvTWVudSIsInBsYXlCdXR0b25DbGljayIsIm1hdGNobWFrZSIsImNyZWF0ZVNhbmRib3hHYW1lIiwiY3JlYXRlTG9jYWxHYW1lIiwiY29uc29sZSIsImxvZyIsInNldFN0YXRlIiwid2hpY2hTaWRlIiwibW92ZU1hbmFnZXIiLCJjbGllbnRUZWFtIiwiY2FtZXJhRGVzdGluYXRpb24iLCJUSFJFRSIsIlZlY3RvcjMiLCJnYW1lQm9hcmQiLCJncmFwaGljcyIsImdldENlbnRlciIsInoiLCJzbW9vdGhuZXNzIiwic3F1YXJlZEVwc2lsb24iLCJpbnRlcnBvbGF0ZWRDb29yZHMiLCJDYW1lcmFBbmltYXRpb24iLCJzbW9vdGhMZXJwIiwiY2FtZXJhIiwicG9zaXRpb24iLCJhZGRUb1F1ZXVlIiwiYW5pbWF0aW9uUXVldWUiLCJDbGllbnRTdGF0ZSIsIkdBTUVfU1RBVEUiLCJzb2NrZXQiLCJlbWl0IiwidWlQcm94eSIsImdhbWVJRCIsImdlbkdhbWVJZCIsImhpc3RvcnkiLCJwdXNoU3RhdGUiLCJzZXRNb2RlIiwiTW9kZSIsIlNBTkRCT1giLCJ1cGRhdGVVSSIsInVwZGF0ZVNlbGVjdGFiaWxpdHkiLCJMT0NBTF9NVUxUSVBMQVlFUiIsIlVJIiwiTUVOVSIsIm1lbnUiLCJQTEFZX09QVElPTlMiLCJwbGF5T3B0aW9ucyIsImdhbWUiLCJjcmVhdGVQcml2YXRlR2FtZSIsIlJlYWN0IiwiQ29tcG9uZW50IiwiTW92ZVN0YXR1cyIsInRleHQiLCJ0b29sYmFyUHJveHkiLCJpZCIsIlJlY3RNZW51QnV0dG9uIiwiaGFuZGxlQ2xpY2siLCJQbGF5QnV0dG9uIiwiUGxheU9wdGlvbiIsIk1vdmVIaXN0b3J5QnV0dG9uIiwiaW1nU3JjIiwiUmVkb0J1dHRv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QW5CO0FBSGtCO0FBSWxCOzs7O2tDQUVhO0FBQ2JXLGtCQUFZdUQsSUFBWjtBQUNBOzs7O0VBVHVCTCxpQiIsImZpbGUiOiJJbmxpbmUgQmFiZWwgc2NyaXB0Iiwic291cmNlc0NvbnRlbnQiOlsiXG5cbiAgICAgICAgIGNsYXNzIEFwcCBleHRlbmRzIFJlYWN0LkNvbXBvbmVudCB7XG4gICAgICAgICBcdFxuICAgICAgICAgXHRjb25zdHJ1Y3Rvcihwcm9wcykge1xuICAgICAgICAgXHRcdHN1cGVyKHByb3BzKTtcbiAgICAgICAgIFx0XHR0aGlzLnN0YXRlID0ge2NsaWVudFN0YXRlOiBzdGF0ZU1hbmFnZXIuc3RhdGV9O1xuICAgICAgICAgXHRcdHRoaXMuc3dhcFN0YXRlID0gdGhpcy5zd2FwU3RhdGUuYmluZCh0aGlzKVxuICAgICAgICAgXHRcdHRoaXMuZXhpdE1lbnUgPSB0aGlzLmV4aXRNZW51LmJpbmQodGhpcylcbiAgICAgICAgIFx0XHR0aGlzLmJhY2tUb01lbnUgPSB0aGlzLmJhY2tUb01lbnUuYmluZCh0aGlzKVxuICAgICAgICAgXHRcdFxuICAgICAgICAgXHRcdHRoaXMucGxheUJ1dHRvbkNsaWNrID0gdGhpcy5wbGF5QnV0dG9uQ2xpY2suYmluZCh0aGlzKVxuICAgICAgICAgXHRcdHRoaXMubWF0Y2htYWtlID0gdGhpcy5tYXRjaG1ha2UuYmluZCh0aGlzKVxuICAgICAgICAgXHRcdHRoaXMuY3JlYXRlU2FuZGJveEdhbWUgPSB0aGlzLmNyZWF0ZVNhbmRib3hHYW1lLmJpbmQodGhpcylcbiAgICAgICAgIFx0XHR0aGlzLmNyZWF0ZUxvY2FsR2FtZSA9IHRoaXMuY3JlYXRlTG9jYWxHYW1lLmJpbmQodGhpcylcbiAgICAgICAgIFx0fVxuICAgICAgICAgXHRcbiAgICAgICAgIFx0c3dhcFN0YXRlKGNsaWVudFN0YXRlKSB7XG4gICAgICAgICBcdFx0Y29uc29sZS5sb2coXCJBcHAuc3dhcFN0YXRlIGNhbGxlZFwiKVxuICAgICAgICAgXHRcdHRoaXMuc2V0U3RhdGUoe1xuICAgICAgICAgXHRcdFx0Y2xpZW50U3RhdGU6IGNsaWVudFN0YXRlXG4gICAgICAgICBcdFx0fSlcbiAgICAgICAgIFx0XHRzdGF0ZU1hbmFnZXIuc3dhcFN0YXRlKGNsaWVudFN0YXRlKTtcbiAgICAgICAgIFx0fVxuICAgICAgICAgXHRcbiAgICAgICAgIFx0ZXhpdE1lbnUoKSB7XG4gICAgICAgICBcdFx0bGV0IHdoaWNoU2lkZSA9IC0yICogbW92ZU1hbmFnZXIuY2xpZW50VGVhbSArIDE7XG4gICAgICAgICBcdFx0aWYgKG1vdmVNYW5hZ2VyLmNsaWVudFRlYW0gPT09IC0xKSB7XG4gICAgICAgICBcdFx0XHR3aGljaFNpZGUgPSAxO1xuICAgICAgICAgXHRcdH1cbiAgICAgICAgIFx0XHRjb25zdCBjYW1lcmFEZXN0aW5hdGlvbiA9IG5ldyBUSFJFRS5WZWN0b3IzKDYwMCAqIHdoaWNoU2lkZSwgNTEwLCBnYW1lQm9hcmQuZ3JhcGhpY3MuZ2V0Q2VudGVyKCkueik7XG4gICAgICAgICBcdFx0Y29uc3Qgc21vb3RobmVzcyA9IDMvMzAwO1xuICAgICAgICAgXHRcdGNvbnN0IHNxdWFyZWRFcHNpbG9uID0gMTAwO1xuICAgICAgICAgXHRcdGNvbnN0IGludGVycG9sYXRlZENvb3JkcyA9IENhbWVyYUFuaW1hdGlvbi5zbW9vdGhMZXJwKGNhbWVyYS5wb3NpdGlvbiwgY2FtZXJhRGVzdGluYXRpb24sIHNtb290aG5lc3MsIHNxdWFyZWRFcHNpbG9uKTtcbiAgICAgICAgIFx0XHRDYW1lcmFBbmltYXRpb24uYWRkVG9RdWV1ZShhbmltYXRpb25RdWV1ZSwgY2FtZXJhLCBpbnRlcnBvbGF0ZWRDb29yZHMpXG4gICAgICAgICBcdFx0dGhpcy5zd2FwU3RhdGUoQ2xpZW50U3RhdGUuR0FNRV9TVEFURSk7XG4gICAgICAgICBcdH1cbiAgICAgICAgIFx0XG4gICAgICAgICBcdG1hdGNobWFrZSgpIHtcbiAgICAgICAgIFx0XHRzb2NrZXQuZW1pdCgnbWF0Y2htYWtlJyk7XG4gICAgICAgICBcdFx0Ly8gVE9ETzogU2hvdyBtYXRjaG1ha2luZyBzY3JlZW5cbiAgICAgICAgIFx0XHR1aVByb3h5LmV4aXRNZW51KCk7XG4gICAgICAgICBcdH1cbiAgICAgICAgIFx0XG4gICAgICAgICBcdGNyZWF0ZVByaXZhdGVHYW1lKCkge1xuICAgICAgICAgXHRcdGNvbnN0IGdhbWVJRCA9IGdlbkdhbWVJZCgpXG4gICAgICAgICBcdFx0c29ja2V0LmVtaXQoJ2pvaW4nLCBnYW1lSUQpO1xuICAgICAgICAgXHRcdGhpc3RvcnkucHVzaFN0YXRlKHt9LCBudWxsLCBnYW1lSUQpO1xuICAgICAgICAgXHR9XG4gICAgICAgICBcdFxuICAgICAgICAgXHRjcmVhdGVTYW5kYm94R2FtZSgpIHtcbiAgICAgICAgIFx0XHRoaXN0b3J5LnB1c2hTdGF0ZSh7fSwgbnVsbCwgJ3NhbmRib3gnKTtcbiAgICAgICAgIFx0XHRtb3ZlTWFuYWdlci5zZXRNb2RlKE1vZGUuU0FOREJPWCk7XG4gICAgICAgICBcdFx0bW92ZU1hbmFnZXIudXBkYXRlVUkoKTtcbiAgICAgICAgIFx0XHRtb3ZlTWFuYWdlci51cGRhdGVTZWxlY3RhYmlsaXR5KCk7XG4gICAgICAgICBcdFx0dGhpcy5leGl0TWVudSgpO1xuICAgICAgICAgXHR9XG4gICAgICAgICBcdFxuICAgICAgICAgXHRjcmVhdGVMb2NhbEdhbWUoKSB7XG4gICAgICAgICBcdFx0aGlzdG9yeS5wdXNoU3RhdGUoe30sIG51bGwsICdsb2NhbEdhbWUnKTtcbiAgICAgICAgIFx0XHRtb3ZlTWFuYWdlci5zZXRNb2RlKE1vZGUuTE9DQUxfTVVMVElQTEFZRVIpO1xuICAgICAgICAgXHRcdG1vdmVNYW5hZ2VyLnVwZGF0ZVVJKCk7XG4gICAgICAgICBcdFx0bW92ZU1hbmFnZXIudXBkYXRlU2VsZWN0YWJpbGl0eSgpO1xuICAgICAgICAgXHRcdHRoaXMuZXhpdE1lbnUoKTtcbiAgICAgICAgIFx0fVxuICAgICAgICAgXHRcbiAgICAgICAgIFx0Y29tcG9uZW50RGlkTW91bnQoKSB7XG4gICAgICAgICBcdFx0dWlQcm94eSA9IG5ldyBVSSh0aGlzKTtcbiAgICAgICAgIFx0fVxuICAgICAgICAgXHRcbiAgICAgICAgIFx0cmVuZGVyKCkge1xuICAgICAgICAgXHRcdGlmICh0aGlzLnN0YXRlLmNsaWVudFN0YXRlID09PSBDbGllbnRTdGF0ZS5NRU5VKSB7XG4gICAgICAgICBcdFx0XHRyZXR1cm4gdGhpcy5tZW51KCk7XG4gICAgICAgICBcdFx0fSBlbHNlIGlmKHRoaXMuc3RhdGUuY2xpZW50U3RhdGUgPT09IENsaWVudFN0YXRlLlBMQVlfT1BUSU9OUykge1xuICAgICAgICAgXHRcdFx0cmV0dXJuIHRoaXMucGxheU9wdGlvbnMoKTtcbiAgICAgICAgIFx0XHR9IGVsc2Uge1xuICAgICAgICAgXHRcdFx0cmV0dXJuIHRoaXMuZ2FtZSgpO1xuICAgICAgICAgXHRcdH1cbiAgICAgICAgIFx0fVxuICAgICAgICAgXHRcbiAgICAgICAgIFx0bWVudSgpIHtcbiAgICAgICAgIFx0XHRjb25zb2xlLmxvZygnTUVOVScpXG4gICAgICAgICBcdFx0cmV0dXJuIChcbiAgICAgICAgIFx0XHRcdDxkaXYgY2xhc3NOYW1lPVwib3ZlcmxheVwiPlxuICAgICAgICAgXHRcdFx0XHQ8aDEgY2xhc3NOYW1lPVwidGV4dFwiIGlkPVwiZ2FtZVRpdGxlXCI+NEQgQ2hlc3MgPC9oMT5cbiAgICAgICAgIFx0XHRcdFx0PGgxIGNsYXNzTmFtZT1cInRleHRcIiBpZD1cImdhbWVTdWJUaXRsZVwiPiBPbmxpbmUgPC9oMT5cbiAgICAgICAgIFx0XHRcdFx0PFBsYXlCdXR0b24gaWQ9XCJwbGF5QnV0dG9uXCIgdGV4dD1cIlBsYXlcIiBoYW5kbGVDbGljaz17dGhpcy5wbGF5QnV0dG9uQ2xpY2t9Lz5cbiAgICAgICAgIFx0XHRcdFx0PFBsYXlCdXR0b24gaWQ9XCJwcml2YXRlUm9vbUJ1dHRvblwiIHRleHQ9XCJDcmVhdGUgUHJpdmF0ZSBHYW1lXCIgaGFuZGxlQ2xpY2s9e3RoaXMuY3JlYXRlUHJpdmF0ZUdhbWV9Lz5cbiAgICAgICAgIFx0XHRcdDwvZGl2PlxuICAgICAgICAgXHRcdCk7XG4gICAgICAgICBcdH1cbiAgICAgICAgIFx0XG4gICAgICAgICBcdHBsYXlCdXR0b25DbGljaygpIHtcbiAgICAgICAgIFx0XHR0aGlzLnN3YXBTdGF0ZShDbGllbnRTdGF0ZS5QTEFZX09QVElPTlMpO1xuICAgICAgICAgXHR9XG4gICAgICAgICBcdFxuICAgICAgICAgXHRiYWNrVG9NZW51KCkge1xuICAgICAgICAgXHRcdHRoaXMuc3dhcFN0YXRlKENsaWVudFN0YXRlLk1FTlUpO1xuICAgICAgICAgXHR9XG4gICAgICAgICBcdFxuICAgICAgICAgXHRwbGF5T3B0aW9ucygpIHtcbiAgICAgICAgIFx0XHRjb25zb2xlLmxvZygnUExBWSBPUFRJT05TJylcbiAgICAgICAgIFx0XHRyZXR1cm4gKFxuICAgICAgICAgXHRcdFx0PGRpdiBjbGFzc05hbWU9XCJvdmVybGF5XCI+XG4gICAgICAgICBcdFx0XHRcdDxkaXYgaWQ9XCJwbGF5T3B0aW9uc01lbnVcIj5cbiAgICAgICAgIFx0XHRcdFx0XHQ8aDEgY2xhc3NOYW1lPVwidGV4dFwiPiBQaWNrIGEgR2FtZSBNb2RlPC9oMT5cbiAgICAgICAgIFx0XHRcdFx0XHQ8UGxheU9wdGlvbiBpZD1cIm1hdGNobWFraW5nQnV0dG9uXCIgdGV4dD1cIk9ubGluZSBNYXRjaG1ha2luZ1wiIGhhbmRsZUNsaWNrPXt0aGlzLm1hdGNobWFrZX0+PC9QbGF5T3B0aW9uPlxuICAgICAgICAgXHRcdFx0XHRcdDxQbGF5T3B0aW9uIGlkPVwibG9jYWxNdWx0aXBsYXllckJ1dHRvblwiIHRleHQ9XCJMb2NhbCBNdWx0aXBsYXllclwiIGhhbmRsZUNsaWNrPXt0aGlzLmNyZWF0ZUxvY2FsR2FtZX0+PC9QbGF5T3B0aW9uPlxuICAgICAgICAgXHRcdFx0XHRcdDxQbGF5T3B0aW9uIGlkPVwic2FuZGJveEJ1dHRvblwiIHRleHQ9XCJGcmVlIFBsYXlcIiBoYW5kbGVDbGljaz17dGhpcy5jcmVhdGVTYW5kYm94R2FtZX0+PC9QbGF5T3B0aW9uPlxuICAgICAgICAgXHRcdFx0XHRcdDxQbGF5T3B0aW9uIGlkPVwiYmFja1RvTWVudUJ1dHRvblwiIHRleHQ9XCJCYWNrIFRvIE1lbnVcIiBoYW5kbGVDbGljaz17dGhpcy5iYWNrVG9NZW51fT48L1BsYXlPcHRpb24+XG4gICAgICAgICBcdFx0XHRcdDwvZGl2PlxuICAgICAgICAgXHRcdFx0PC9kaXY+XG4gICAgICAgICBcdFx0KTtcbiAgICAgICAgIFx0fVxuICAgICAgICAgXHRcbiAgICAgICAgIFx0Z2FtZSgpIHtcbiAgICAgICAgIFx0XHRyZXR1cm4gKFxuICAgICAgICAgXHRcdFx0PGRpdiBjbGFzc05hbWU9XCJvdmVybGF5XCI+XG4gICAgICAgICBcdFx0XHRcdDxkaXYgaWQ9XCJ0b29sYmFyXCI+XG4gICAgICAgICBcdFx0XHRcdFx0PFVuZG9CdXR0b24gb24gaWQ9XCJ1bmRvQnV0dG9uXCIvPlxuICAgICAgICAgXHRcdFx0XHRcdDxNb3ZlU3RhdHVzIGlkPVwibW92ZVN0YXR1c1wiPjwvTW92ZVN0YXR1cz5cbiAgICAgICAgIFx0XHRcdFx0XHQ8UmVkb0J1dHRvbiBpZD1cInJlZG9CdXR0b25cIi8+XG4gICAgICAgICBcdFx0XHRcdDwvZGl2PlxuICAgICAgICAgXHRcdFx0PC9kaXY+XG4gICAgICAgICBcdFx0KTtcbiAgICAgICAgIFx0fVxuICAgICAgICAgfVxuICAgICAgICAgXG4gICAgICAgICBjbGFzcyBNb3ZlU3RhdHVzIGV4dGVuZHMgUmVhY3QuQ29tcG9uZW50IHtcbiAgICAgICAgIFx0Y29uc3RydWN0b3IocHJvcHMpIHtcbiAgICAgICAgIFx0XHRzdXBlcihwcm9wcylcbiAgICAgICAgIFx0XHR0aGlzLnN0YXRlID0ge1xuICAgICAgICAgXHRcdFx0dGV4dDogXCJcIlxuICAgICAgICAgXHRcdH1cbiAgICAgICAgIFx0XHRcbiAgICAgICAgIFx0XHRtb3ZlTWFuYWdlci51cGRhdGVVSSgpO1xuICAgICAgICAgXHRcdFxuICAgICAgICAgXHR9XG4gICAgICAgICBcdFxuICAgICAgICAgXHRjb21wb25lbnREaWRNb3VudCgpIHtcbiAgICAgICAgIFx0XHR0b29sYmFyUHJveHkgPSBuZXcgVUkodGhpcyk7XG4gICAgICAgICBcdFx0bW92ZU1hbmFnZXIudXBkYXRlVUkoKTtcbiAgICAgICAgICAgXHR9XG4gICAgICAgICBcdFxuICAgICAgICAgXHRyZW5kZXIoKSB7XG4gICAgICAgICBcdFx0cmV0dXJuIChcbiAgICAgICAgIFx0XHRcdDxkaXYgaWQ9e3RoaXMucHJvcHMuaWR9IGNsYXNzTmFtZT1cInRleHQgdG9vbGJhckl0ZW1cIj5cbiAgICAgICAgIFx0XHRcdFx0e3RoaXMuc3RhdGUudGV4dH1cbiAgICAgICAgIFx0XHRcdDwvZGl2PlxuICAgICAgICAgXHRcdClcbiAgICAgICAgIFx0fVxuICAgICAgICAgXHRcbiAgICAgICAgIH1cbiAgICAgICAgIFxuICAgICAgICAgY2xhc3MgUmVjdE1lbnVCdXR0b24gZXh0ZW5kcyBSZWFjdC5Db21wb25lbnQge1xuICAgICAgICAgXHRjb25zdHJ1Y3Rvcihwcm9wcykge1xuICAgICAgICAgXHRcdHN1cGVyKHByb3BzKVxuICAgICAgICAgXHRcdHRoaXMuaGFuZGxlQ2xpY2sgPSB0aGlzLnByb3BzLmhhbmRsZUNsaWNrO1xuICAgICAgICAgXHR9XG4gICAgICAgICBcdFxuICAgICAgICAgXHRyZW5kZXIoKSB7XG4gICAgICAgICBcdFx0cmV0dXJuICg8YnV0dG9uIG9uQ2xpY2s9e3RoaXMuaGFuZGxlQ2xpY2t9IGNsYXNzTmFtZT1cInRleHQgcmVjdEJ1dHRvblwiIGlkPXt0aGlzLnByb3BzLmlkfT5cbiAgICAgICAgIFx0XHRcdFx0XHR7dGhpcy5wcm9wcy50ZXh0fVxuICAgICAgICAgXHRcdFx0XHQ8L2J1dHRvbj4pO1xuICAgICAgICAgXHR9XG4gICAgICAgICB9XG4gICAgICAgICBcbiAgICAgICAgIFxuICAgICAgICAgXG4gICAgICAgICBjbGFzcyBQbGF5QnV0dG9uIGV4dGVuZHMgUmVjdE1lbnVCdXR0b24ge1xuICAgICAgICAgXHRcbiAgICAgICAgIH1cbiAgICAgICAgIFxuICAgICAgICAgY2xhc3MgUGxheU9wdGlvbiBleHRlbmRzIFJlY3RNZW51QnV0dG9uIHtcbiAgICAgICAgIFx0cmVuZGVyKCkge1xuICAgICAgICAgXHRcdHJldHVybiAoPGJ1dHRvbiBvbkNsaWNrPXt0aGlzLmhhbmRsZUNsaWNrfSBjbGFzc05hbWU9XCJ0ZXh0IHJlY3RCdXR0b24gcGxheU9wdGlvbkJ1dHRvblwiIGlkPXt0aGlzLnByb3BzLmlkfT5cbiAgICAgICAgIFx0XHRcdFx0XHR7dGhpcy5wcm9wcy50ZXh0fVxuICAgICAgICAgXHRcdFx0XHQ8L2J1dHRvbj4pXG4gICAgICAgICBcdH1cbiAgICAgICAgIH1cbiAgICAgICAgIFxuICAgICAgICAgY2xhc3MgTW92ZUhpc3RvcnlCdXR0b24gZXh0ZW5kcyBSZWFjdC5Db21wb25lbnQge1xuICAgICAgICAgXHRyZW5kZXIoKSB7XG4gICAgICAgICBcdFx0cmV0dXJuIChcbiAgICAgICAgIFx0XHRcdDxhIG9uQ2xpY2s9e3RoaXMuaGFuZGxlQ2xpY2t9IGNsYXNzTmFtZT1cIm1vdmVIaXN0b3J5QnV0dG9uIHRvb2xiYXJJdGVtXCIgaWQ9e3RoaXMucHJvcHMuaWR9PlxuICAgICAgICAgXHRcdFx0XHQ8aW1nIHNyYz17dGhpcy5pbWdTcmN9Lz5cbiAgICAgICAgIFx0XHRcdDwvYT5cbiAgICAgICAgIFx0XHQpO1xuICAgICAgICAgXHR9XG4gICAgICAgICB9XG4gICAgICAgICBcbiAgICAgICAgIGNsYXNzIFJlZG9CdXR0b24gZXh0ZW5kcyBNb3ZlSGlzdG9yeUJ1dHRvbiB7XG4gICAgICAgICBcdGNvbnN0cnVjdG9yKHByb3BzKSB7XG4gICAgICAgICBcdFx0c3VwZXIocHJvcHMpO1xuICAgICAgICAgXHRcdHRoaXMuaW1nU3JjID0gXCIuL2ljb25zL2Fycm93X2ZvcndhcmRfaW9zLTI0cHguc3ZnXCJcbiAgICAgICAgIFx0XHR0aGlzLmhhbmRsZUNsaWNrID0gdGhpcy5oYW5kbGVDbGljay5iaW5kKHRoaXMpO1xuICAgICAgICAgXHR9XG4gICAgICAgICBcbiAgICAgICAgIFx0aGFuZGxlQ2xpY2soKSB7XG4gICAgICAgICBcdFx0bW92ZU1hbmFnZXIucmVkbygpO1xuICAgICAgICAgXHR9XG4gICAgICAgICB9XG4gICAgICAgICBcbiAgICAgICAgIGNsYXNzIFVuZG9CdXR0b24gZXh0ZW5kcyBNb3ZlSGlzdG9yeUJ1dHRvbiB7XG4gICAgICAgICBcdGNvbnN0cnVjdG9yKHByb3BzKSB7XG4gICAgICAgICBcdFx0c3VwZXIocHJvcHMpO1xuICAgICAgICAgXHRcdHRoaXMuaW1nU3JjID0gXCIuL2ljb25zL2Fycm93X2JhY2tfaW9zLTI0cHguc3ZnXCI7XHRcdFx0XHRcdFxuICAgICAgICAgXHRcdHRoaXMuaGFuZGxlQ2xpY2sgPSB0aGlzLmhhbmRsZUNsaWNrLmJpbmQodGhpcyk7XG4gICAgICAgICBcdH1cbiAgICAgICAgIFxuICAgICAgICAgXHRoYW5kbGVDbGljaygpIHtcbiAgICAgICAgIFx0XHRtb3ZlTWFuYWdlci51bmRvKCk7XG4gICAgICAgICBcdH1cbiAgICAgICAgIH1cbiAgICAgICAgIFxuICAgICAgIl19</script></head>
-<body>
-  <div id="gui" class="overlay"></div>
-  <script type="text/babel">
-
-     class App extends React.Component {
-       
-       constructor(props) {
-         super(props);
-         this.state = {clientState: stateManager.state};
-         this.swapState = this.swapState.bind(this)
-         this.exitMenu = this.exitMenu.bind(this)
-         this.backToMenu = this.backToMenu.bind(this)
-         
-         this.playButtonClick = this.playButtonClick.bind(this)
-         this.matchmake = this.matchmake.bind(this)
-         this.createSandboxGame = this.createSandboxGame.bind(this)
-         this.createLocalGame = this.createLocalGame.bind(this)
-       }
-       
-       swapState(clientState) {
-         console.log("App.swapState called")
-         this.setState({
-           clientState: clientState
-         })
-         stateManager.swapState(clientState);
-       }
-       
-       exitMenu() {
-         let whichSide = -2 * moveManager.clientTeam + 1;
-         if (moveManager.clientTeam === -1) {
-           whichSide = 1;
-         }
-         const cameraDestination = new THREE.Vector3(600 * whichSide, 510, gameBoard.graphics.getCenter().z);
-         const smoothness = 3/300;
-         const squaredEpsilon = 100;
-         const interpolatedCoords = CameraAnimation.smoothLerp(camera.position, cameraDestination, smoothness, squaredEpsilon);
-         CameraAnimation.addToQueue(animationQueue, camera, interpolatedCoords)
-         this.swapState(ClientState.GAME_STATE);
-       }
-       
-       matchmake() {
-         socket.emit('matchmake');
-         // TODO: Show matchmaking screen
-         uiProxy.exitMenu();
-       }
-       
-       createPrivateGame() {
-         const gameID = genGameId()
-         socket.emit('join', gameID);
-         history.pushState({}, null, gameID);
-       }
-       
-       createSandboxGame() {
-         history.pushState({}, null, 'sandbox');
-         moveManager.setMode(Mode.SANDBOX);
-         moveManager.updateUI();
-         moveManager.updateSelectability();
-         this.exitMenu();
-       }
-       
-       createLocalGame() {
-         history.pushState({}, null, 'localGame');
-         moveManager.setMode(Mode.LOCAL_MULTIPLAYER);
-         moveManager.updateUI();
-         moveManager.updateSelectability();
-         this.exitMenu();
-       }
-       
-       componentDidMount() {
-         uiProxy = new UI(this);
-       }
-       
-       render() {
-         if (this.state.clientState === ClientState.MENU) {
-           return this.menu();
-         } else if(this.state.clientState === ClientState.PLAY_OPTIONS) {
-           return this.playOptions();
-         } else {
-           return this.game();
-         }
-       }
-       
-       menu() {
-         console.log('MENU')
-         return (
-           <div className="overlay">
-             <h1 className="text" id="gameTitle">4D Chess </h1>
-             <h1 className="text" id="gameSubTitle"> Online </h1>
-             <PlayButton id="playButton" text="Play" handleClick={this.playButtonClick}/>
-             <PlayButton id="privateRoomButton" text="Create Private Game" handleClick={this.createPrivateGame}/>
-           </div>
-         );
-       }
-       
-       playButtonClick() {
-         this.swapState(ClientState.PLAY_OPTIONS);
-       }
-       
-       backToMenu() {
-         this.swapState(ClientState.MENU);
-       }
-       
-       playOptions() {
-         console.log('PLAY OPTIONS')
-         return (
-           <div className="overlay">
-             <div id="playOptionsMenu">
-               <h1 className="text"> Pick a Game Mode</h1>
-               <PlayOption id="matchmakingButton" text="Online Matchmaking" handleClick={this.matchmake}></PlayOption>
-               <PlayOption id="localMultiplayerButton" text="Local Multiplayer" handleClick={this.createLocalGame}></PlayOption>
-               <PlayOption id="sandboxButton" text="Free Play" handleClick={this.createSandboxGame}></PlayOption>
-               <PlayOption id="backToMenuButton" text="Back To Menu" handleClick={this.backToMenu}></PlayOption>
-             </div>
-           </div>
-         );
-       }
-       
-       game() {
-         return (
-           <div className="overlay">
-             <div id="toolbar">
-               <UndoButton on id="undoButton"/>
-               <MoveStatus id="moveStatus"></MoveStatus>
-               <RedoButton id="redoButton"/>
-             </div>
-           </div>
-         );
-       }
-     }
-     
-     class MoveStatus extends React.Component {
-       constructor(props) {
-         super(props)
-         this.state = {
-           text: ""
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>4D Chess</title>
+      <!--	Disable Zoom on mobile	-->
+      <meta name="viewport" content="width=device-width, user-scalable=no">
+      <script src="/socket.io/socket.io.js"></script>
+      <link href="https://fonts.googleapis.com/css?family=Roboto+Mono|Source+Code+Pro|Ubuntu+Mono&display=swap" rel="stylesheet">
+      <script src="js/three.js"></script>
+      <script src="js/TrackballControls.js"></script>
+      <script src="js/Detector.js"></script>
+      <script src="js/Models.js"></script>
+      <script src="js/GameBoard.js"></script>
+      <script src="js/Mode.js"></script>
+      <script src="js/MoveManager.js"></script>
+      <script src="js/Piece.js"></script>
+      <script src="js/Pointer.js"></script>
+      <script src="js/Animation.js"></script>
+      <script src="js/ClientStateManager.js"></script>
+      <script src="js/ClientState.js"></script>
+      <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+      <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+      <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+      <script src="https://unpkg.com/@material-ui/core@4.9.5/umd/material-ui.development.js"></script>
+      <script src="js/lodash.js"></script>
+      <link rel="stylesheet" type="text/css" href="css/style.css">
+      <script type="text/babel" src="js/app.js"></script>
+      <script type="text/babel" src="js/UI.js"></script>
+   </head>
+   <body>
+      <div id="gui" class="overlay"></div>
+      <script type="text/babel">
+
+         class App extends React.Component {
+         	
+         	constructor(props) {
+         		super(props);
+         		this.state = {clientState: stateManager.state};
+         		this.swapState = this.swapState.bind(this)
+         		this.exitMenu = this.exitMenu.bind(this)
+         		this.backToMenu = this.backToMenu.bind(this)
+         		
+         		this.playButtonClick = this.playButtonClick.bind(this)
+         		this.matchmake = this.matchmake.bind(this)
+         		this.createSandboxGame = this.createSandboxGame.bind(this)
+         		this.createLocalGame = this.createLocalGame.bind(this)
+         	}
+         	
+         	swapState(clientState) {
+         		console.log("App.swapState called")
+         		this.setState({
+         			clientState: clientState
+         		})
+         		stateManager.swapState(clientState);
+         	}
+         	
+         	exitMenu() {
+         		let whichSide = -2 * moveManager.clientTeam + 1;
+         		if (moveManager.clientTeam === -1) {
+         			whichSide = 1;
+         		}
+         		const cameraDestination = new THREE.Vector3(600 * whichSide, 510, gameBoard.graphics.getCenter().z);
+         		const smoothness = 3/300;
+         		const squaredEpsilon = 100;
+         		const interpolatedCoords = CameraAnimation.smoothLerp(camera.position, cameraDestination, smoothness, squaredEpsilon);
+         		CameraAnimation.addToQueue(animationQueue, camera, interpolatedCoords)
+         		this.swapState(ClientState.GAME_STATE);
+         	}
+         	
+         	matchmake() {
+         		socket.emit('matchmake');
+         		// TODO: Show matchmaking screen
+         		uiProxy.exitMenu();
+         	}
+         	
+         	createPrivateGame() {
+         		const gameID = genGameId()
+         		socket.emit('join', gameID);
+         		history.pushState({}, null, gameID);
+         	}
+         	
+         	createSandboxGame() {
+         		history.pushState({}, null, 'sandbox');
+         		moveManager.setMode(Mode.SANDBOX);
+         		moveManager.updateUI();
+         		moveManager.updateSelectability();
+         		this.exitMenu();
+         	}
+         	
+         	createLocalGame() {
+         		history.pushState({}, null, 'localGame');
+         		moveManager.setMode(Mode.LOCAL_MULTIPLAYER);
+         		moveManager.updateUI();
+         		moveManager.updateSelectability();
+         		this.exitMenu();
+         	}
+         	
+         	componentDidMount() {
+         		uiProxy = new UI(this);
+         	}
+         	
+         	render() {
+         		if (this.state.clientState === ClientState.MENU) {
+         			return this.menu();
+         		} else if(this.state.clientState === ClientState.PLAY_OPTIONS) {
+         			return this.playOptions();
+         		} else {
+         			return this.game();
+         		}
+         	}
+         	
+         	menu() {
+         		console.log('MENU')
+         		return (
+         			<div className="overlay">
+         				<h1 className="text" id="gameTitle">4D Chess </h1>
+         				<h1 className="text" id="gameSubTitle"> Online </h1>
+         				<PlayButton id="playButton" text="Play" handleClick={this.playButtonClick}/>
+         				<PlayButton id="privateRoomButton" text="Create Private Game" handleClick={this.createPrivateGame}/>
+         			</div>
+         		);
+         	}
+         	
+         	playButtonClick() {
+         		this.swapState(ClientState.PLAY_OPTIONS);
+         	}
+         	
+         	backToMenu() {
+         		this.swapState(ClientState.MENU);
+         	}
+         	
+         	playOptions() {
+         		console.log('PLAY OPTIONS')
+         		return (
+         			<div className="overlay">
+         				<div id="playOptionsMenu">
+         					<h1 className="text"> Pick a Game Mode</h1>
+         					<PlayOption id="matchmakingButton" text="Online Matchmaking" handleClick={this.matchmake}></PlayOption>
+         					<PlayOption id="localMultiplayerButton" text="Local Multiplayer" handleClick={this.createLocalGame}></PlayOption>
+         					<PlayOption id="sandboxButton" text="Free Play" handleClick={this.createSandboxGame}></PlayOption>
+         					<PlayOption id="backToMenuButton" text="Back To Menu" handleClick={this.backToMenu}></PlayOption>
+         				</div>
+         			</div>
+         		);
+         	}
+         	
+         	game() {
+         		return (
+         			<div className="overlay">
+         				<div id="toolbar">
+         					<UndoButton on id="undoButton"/>
+         					<MoveStatus id="moveStatus"></MoveStatus>
+         					<RedoButton id="redoButton"/>
+         				</div>
+         			</div>
+         		);
+         	}
          }
          
-         moveManager.updateUI();
-         
-       }
-       
-       componentDidMount() {
-         toolbarProxy = new UI(this);
-         moveManager.updateUI();
+         class MoveStatus extends React.Component {
+         	constructor(props) {
+         		super(props)
+         		this.state = {
+         			text: ""
+         		}
+         		
+         		moveManager.updateUI();
+         		
+         	}
+         	
+         	componentDidMount() {
+         		toolbarProxy = new UI(this);
+         		moveManager.updateUI();
+           	}
+         	
+         	render() {
+         		return (
+         			<div id={this.props.id} className="text toolbarItem">
+         				{this.state.text}
+         			</div>
+         		)
+         	}
+         	
          }
-       
-       render() {
-         return (
-           <div id={this.props.id} className="text toolbarItem">
-             {this.state.text}
-           </div>
-         )
-       }
-       
-     }
-     
-     class RectMenuButton extends React.Component {
-       constructor(props) {
-         super(props)
-         this.handleClick = this.props.handleClick;
-       }
-       
-       render() {
-         return (<button onClick={this.handleClick} className="text rectButton" id={this.props.id}>
-               {this.props.text}
-             </button>);
-       }
-     }
-     
-     
-     
-     class PlayButton extends RectMenuButton {
-       
-     }
-     
-     class PlayOption extends RectMenuButton {
-       render() {
-         return (<button onClick={this.handleClick} className="text rectButton playOptionButton" id={this.props.id}>
-               {this.props.text}
-             </button>)
-       }
-     }
-     
-     class MoveHistoryButton extends React.Component {
-       render() {
-         return (
-           <a onClick={this.handleClick} className="moveHistoryButton toolbarItem" id={this.props.id}>
-             <img src={this.imgSrc}/>
-           </a>
-         );
-       }
-     }
-     
-     class RedoButton extends MoveHistoryButton {
-       constructor(props) {
-         super(props);
-         this.imgSrc = "icons/arrow_forward_ios-24px.svg"
-         this.handleClick = this.handleClick.bind(this);
-       }
-     
-       handleClick() {
-         moveManager.redo();
-       }
-     }
-     
-     class UndoButton extends MoveHistoryButton {
-       constructor(props) {
-         super(props);
-         this.imgSrc = "icons/arrow_back_ios-24px.svg";					
-         this.handleClick = this.handleClick.bind(this);
-       }
-     
-       handleClick() {
-         moveManager.undo();
-       }
-     }
-     
-  </script>
-
-</body></html>
+         
+         class RectMenuButton extends React.Component {
+         	constructor(props) {
+         		super(props)
+         		this.handleClick = this.props.handleClick;
+         	}
+         	
+         	render() {
+         		return (<button onClick={this.handleClick} className="text rectButton" id={this.props.id}>
+         					{this.props.text}
+         				</button>);
+         	}
+         }
+         
+         
+         
+         class PlayButton extends RectMenuButton {
+         	
+         }
+         
+         class PlayOption extends RectMenuButton {
+         	render() {
+         		return (<button onClick={this.handleClick} className="text rectButton playOptionButton" id={this.props.id}>
+         					{this.props.text}
+         				</button>)
+         	}
+         }
+         
+         class MoveHistoryButton extends React.Component {
+         	render() {
+         		return (
+         			<a onClick={this.handleClick} className="moveHistoryButton toolbarItem" id={this.props.id}>
+         				<img src={this.imgSrc}/>
+         			</a>
+         		);
+         	}
+         }
+         
+         class RedoButton extends MoveHistoryButton {
+         	constructor(props) {
+         		super(props);
+         		this.imgSrc = "./icons/arrow_forward_ios-24px.svg"
+         		this.handleClick = this.handleClick.bind(this);
+         	}
+         
+         	handleClick() {
+         		moveManager.redo();
+         	}
+         }
+         
+         class UndoButton extends MoveHistoryButton {
+         	constructor(props) {
+         		super(props);
+         		this.imgSrc = "./icons/arrow_back_ios-24px.svg";					
+         		this.handleClick = this.handleClick.bind(this);
+         	}
+         
+         	handleClick() {
+         		moveManager.undo();
+         	}
+         }
+         
+      </script>
+   </body>
+</html>
