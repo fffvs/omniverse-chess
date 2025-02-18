@@ -114,7 +114,7 @@
          		return (
          			<div className="overlay">
          				<h1 className="text" id="gameTitle">4D Chess </h1>
-         				<h1 className="text" id="gameSubTitle"> Online </h1>
+         				<h1 className="text" id="gameSubTitle"> Local </h1>
          				<PlayButton id="playButton" text="Play" handleClick={this.playButtonClick}/>
          				<PlayButton id="privateRoomButton" text="Create Private Game" handleClick={this.createPrivateGame}/>
          			</div>
@@ -135,7 +135,7 @@
          			<div className="overlay">
          				<div id="playOptionsMenu">
          					<h1 className="text"> Pick a Game Mode</h1>
-         					<PlayOption id="matchmakingButton" text="Online Matchmaking" handleClick={this.matchmake}></PlayOption>
+         					<PlayOption id="matchmakingButton" text="Broken, Don't try to use this" handleClick={this.matchmake}></PlayOption>
          					<PlayOption id="localMultiplayerButton" text="Local Multiplayer" handleClick={this.createLocalGame}></PlayOption>
          					<PlayOption id="sandboxButton" text="Free Play" handleClick={this.createSandboxGame}></PlayOption>
          					<PlayOption id="backToMenuButton" text="Back To Menu" handleClick={this.backToMenu}></PlayOption>
