@@ -8,7 +8,7 @@
 */
 
 
-
+renderer.setClearColor( 0x050a1f);
 
 
 GameBoard.prototype = {
