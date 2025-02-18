@@ -8,6 +8,9 @@
 */
 
 
+
+
+
 GameBoard.prototype = {
     
     initPieces: function(){
@@ -719,4 +722,3 @@ BoardGraphics.checkerboard3d = function(segments=8, boardSize=100, z=0, w=0, opa
 function EmptyBoardGraphics(gameBoard) {
 
 }
-
