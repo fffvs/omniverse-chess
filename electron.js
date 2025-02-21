@@ -11,7 +11,7 @@ if(!isDev) {
 }
 
 var mainWindow = null;
-var baseUrl = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`;
+var baseUrl = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, 'index.html')}`;
 var mainUrl = baseUrl + '';
 
 app.on('open-file', (e, p) => {
